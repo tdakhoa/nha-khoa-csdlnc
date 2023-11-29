@@ -1,0 +1,40 @@
+{
+    "compilerOptions": {
+        "target": "es5",
+        "lib": ["dom", "dom.iterable", "esnext"],
+        "allowJs": true,
+        "skipLibCheck": true,
+        "strict": true,
+        "forceConsistentCasingInFileNames": true,
+        "noEmit": true,
+        "esModuleInterop": true,
+        "module": "esnext",
+        "moduleResolution": "node",
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+        "jsx": "preserve",
+        "incremental": true
+    },
+    "include": [
+        "next-env.d.ts",
+        "**/*.ts",
+        "**/*.tsx",
+        "pages/_document.js",
+        "pages/_app.js",
+        "pages/index.js",
+        "components/index.js",
+        "src/modules/components/TextEditor.js",
+        "src/theme.js",
+        "src/createEmotionCache.js",
+        "src/modules/Layout.jsx",
+        "src/modules/Profile.jsx",
+        "src/modules/NewPost.jsx",
+        "src/modules/AllStaffs.jsx",
+        "src/modules/AllPosts.jsx",
+        "src/modules/Home.jsx",
+        "src/modules/components/StaffTable.tsx",
+        "src/modules/components/Popup.jsx",
+        "src/modules/components/Drawer.jsx"
+    ],
+    "exclude": ["node_modules"]
+}
