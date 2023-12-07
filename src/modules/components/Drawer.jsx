@@ -46,17 +46,6 @@ export default function ToggleDrawer() {
                     <IconButton onClick={handleToggleOpen}>
                         <MenuOutlined sx={{ color: "black" }} />
                     </IconButton>
-                    <Box sx={{ display: open ? "flex" : "none" }}>
-                        <Typography weight="extraBold">Nha Khoa</Typography>
-                        <Box
-                            sx={{
-                                height: "25px",
-                                width: "5px",
-                                backgroundColor: "var(--palette-02)",
-                                marginLeft: "5px"
-                            }}
-                        />
-                    </Box>
                 </DrawerHeader>
 
                 <AvatarContainer sx={{ display: open ? "flex" : "none" }}>
@@ -154,32 +143,32 @@ const menuItems = [
     {
         text: "Trang chủ",
         icon: <HomeRounded />,
-        link: "/all-posts"
+        link: "/home"
     },
     {
         text: "Quản lý cuộc hẹn",
         icon: <CalendarMonthRounded />,
-        link: "/all-staffs"
+        link: "/quan-ly-cuoc-hen"
     },
     {
         text: "Hồ sơ bệnh nhân",
         icon: <FolderRounded />,
-        link: "/profile"
+        link: "/ho-so-benh-nhan"
     },
     {
         text: "Quản lý thuốc",
         icon: <VaccinesRounded />,
-        link: "/profile"
+        link: "/quan-ly-thuoc"
     },
     {
         text: "Dữ liệu hệ thống",
         icon: <SettingsRounded />,
-        link: "/profile"
+        link: "/du-lieu-he-thong"
     },
     {
         text: "Đăng xuất",
         icon: <LogoutOutlined />,
-        link: "/"
+        link: "/login"
     }
 ];
 
