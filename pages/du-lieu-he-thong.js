@@ -1,8 +1,6 @@
 import React from "react";
 import Head from "next/head";
-import dynamic from "next/dynamic";
-
-const DynamicComponentWithNoSSR = dynamic(() => import("../src/modules/Profile"), { ssr: false });
+import DuLieuHeThong from "../src/modules/DuLieuHeThong";
 
 export default function HomePage() {
     return (
@@ -13,7 +11,7 @@ export default function HomePage() {
             </Head>
 
             <main>
-                <DynamicComponentWithNoSSR />
+                <DuLieuHeThong />
             </main>
         </div>
     );

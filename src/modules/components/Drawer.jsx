@@ -36,6 +36,8 @@ export default function ToggleDrawer() {
         setOpen(open !== true);
     };
 
+    let url = router.asPath.indexOf("/", 1) > 0 ? router.asPath.slice(0, router.asPath.indexOf("/", 1)) : router.asPath;
+
     return (
         <>
             <Drawer variant="permanent" open={open}>
@@ -64,31 +66,28 @@ export default function ToggleDrawer() {
 
                 <List>
                     {menuItems.map((item, index) => (
-                        <Link href={item.link}>
+                        <Link href={item.link} key={index}>
                             <Box sx={{ display: "flex", justifyContent: "center", width: "100%" }}>
                                 <StyledItem key={index}>
                                     <ListItemButton
                                         sx={{
                                             justifyContent: open ? "initial" : "center",
-                                            backgroundColor:
-                                                router.asPath === item.link ? "var(--palette-02)" : "transparent",
-                                            color: router.asPath === item.link ? "white" : "black",
+                                            backgroundColor: url === item.link ? "var(--palette-02)" : "transparent",
+                                            color: url === item.link ? "white" : "black",
                                             "&:hover": {
                                                 backgroundColor:
-                                                    router.asPath === item.link
-                                                        ? "var(--palette-02)"
-                                                        : "rgba(0, 0, 0, 0.1)"
+                                                    url === item.link ? "var(--palette-02)" : "rgba(0, 0, 0, 0.1)"
                                             }
                                         }}>
                                         <StyledItemIcon
                                             open={open}
-                                            sx={{ color: router.asPath === item.link ? "white" : "black" }}>
+                                            sx={{ color: url === item.link ? "white" : "black" }}>
                                             {item.icon}
                                         </StyledItemIcon>
                                         <StyledTypo
                                             size="p"
                                             open={open}
-                                            sx={{ color: router.asPath === item.link ? "white" : "black" }}>
+                                            sx={{ color: url === item.link ? "white" : "black" }}>
                                             {item.text}
                                         </StyledTypo>
                                     </ListItemButton>
@@ -112,7 +111,7 @@ export default function ToggleDrawer() {
                             flex: 2
                         }
                     }}
-                    value={router.asPath}>
+                    value={url}>
                     {menuItems.map((item, i) => (
                         <BottomNavigationAction
                             onClick={() => router.push(item.link)}
@@ -128,7 +127,7 @@ export default function ToggleDrawer() {
                                     fontFamily: "Nunito"
                                 }
                             }}
-                            label={router.asPath == item.link ? item.text : ""}
+                            label={url == item.link ? item.text : ""}
                             value={item.link}
                             icon={item.icon}
                         />

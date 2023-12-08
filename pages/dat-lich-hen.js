@@ -1,6 +1,6 @@
 import React from "react";
 import Head from "next/head";
-import QuanLyCuocHen from "../src/modules/QuanLyCuocHen";
+import DatLichHen from "../src/modules/DatLichHen";
 
 export default function HomePage() {
     return (
@@ -11,7 +11,7 @@ export default function HomePage() {
             </Head>
 
             <main>
-                <QuanLyCuocHen />
+                <DatLichHen />
             </main>
         </div>
     );

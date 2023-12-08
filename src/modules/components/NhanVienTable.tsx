@@ -12,32 +12,23 @@ import {
     TableRow,
     TableSortLabel,
     Toolbar,
-    Chip,
     Checkbox,
     IconButton,
     Tooltip,
     useTheme,
     useMediaQuery
 } from "@mui/material";
-import {
-    CancelOutlined,
-    CheckCircleOutline,
-    Delete,
-    DeleteOutlined,
-    EditOutlined,
-    FilterList,
-    VisibilityOutlined
-} from "@mui/icons-material";
+import { CreateOutlined, Delete, DeleteOutlined, FilterList, LockOutlined } from "@mui/icons-material";
 
 import { Typography } from "../../components";
 
-const createData = (title: string, category: string, writer: string, date: string, status: number): Data => {
+const createData = (title: string, category: string, writer: string, date: string, password: string): Data => {
     return {
         title,
         category,
         writer,
         date,
-        status
+        password
     };
 };
 
@@ -134,7 +125,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
             }}>
             {numSelected > 0 ? (
                 <Typography sx={{ flex: "1 1 100%" }} size="p">
-                    {numSelected} bài đã được chọn
+                    {numSelected} nha sĩ đã được chọn
                 </Typography>
             ) : (
                 <></>
@@ -266,17 +257,12 @@ export default function EnhancedTable() {
                                             selected={isItemSelected}>
                                             <TableCell padding="checkbox">
                                                 <Checkbox
-                                                    onClick={(event) => handleClick(event, row.title)}
+                                                    onClick={(event: any) => handleClick(event, row.title)}
                                                     color="primary"
                                                     checked={isItemSelected}
                                                 />
                                             </TableCell>
-                                            <TableCell
-                                                component="th"
-                                                id={labelId}
-                                                scope="row"
-                                                padding="none"
-                                                align="center">
+                                            <TableCell align="center">
                                                 <Typography size="p">{row.title}</Typography>
                                             </TableCell>
                                             <TableCell align="center">
@@ -289,7 +275,7 @@ export default function EnhancedTable() {
                                                 <Typography size="p">{row.date}</Typography>
                                             </TableCell>
                                             <TableCell align="center">
-                                                <StatusChip status={row.status == 1} />
+                                                <Typography size="p">{row.password}</Typography>
                                             </TableCell>
                                             <TableCell align="center">
                                                 <ActionCell />
@@ -319,26 +305,14 @@ export default function EnhancedTable() {
     );
 }
 
-const StatusChip = ({ status = true, sx = {}, ...props }: StatusChipProps) => {
-    return (
-        <Chip
-            label={status == true ? "Đã đăng" : "Bản nháp"}
-            icon={status == true ? <CheckCircleOutline /> : <CancelOutlined />}
-            variant="outlined"
-            sx={status == true ? StyledPushlished : StyledDraft}
-            onClick={handleClick}
-        />
-    );
-};
-
 const ActionCell = () => {
     return (
         <Box sx={StyledActionCell}>
             <IconButton>
-                <VisibilityOutlined />
+                <LockOutlined />
             </IconButton>
             <IconButton>
-                <EditOutlined />
+                <CreateOutlined />
             </IconButton>
             <IconButton>
                 <DeleteOutlined />
@@ -348,11 +322,11 @@ const ActionCell = () => {
 };
 
 const rows = [
-    createData("Bệnh cúm gia cầm", "Bệnh học", "Ngân Lam", "1/1/2023", 1),
-    createData("Chuyển gốc đại động mạch: Bệnh tim bẩm sinh hiếm gặp", "Bệnh học", "Tùng Lâm", "1/1/2023", 2),
-    createData("Kháng sinh CEFTAZIDIM - AVIBACTAM", "Bệnh học", "Ngân Lam", "1/2/2023", 1),
-    createData("Bệnh cúm gia cầm3", "Bệnh học", "Bình Kha", "1/1/2023", 1),
-    createData("Kháng sinh CEFTAZIDIM - AVIBACTAM3", "Bệnh học", "Hiệp Phát", "2/1/2023", 2)
+    createData("NS001", "Phan Văn Thức", "11/12/2001", "0908765423", "********"),
+    createData("NS002", "Trần Hoàng Sinh", "15/03/1998", "098645728", "********"),
+    createData("NS003", "Nguyễn Tấn Hùng", "12/09/2000", "038546725", "********"),
+    createData("NS004", "Trần Nhân Phước", "01/05/1999", "087684257", "********"),
+    createData("NS005", "Lê Thiên Anh", "11/05/2001", "090555476", "********")
 ];
 
 const headCells: readonly HeadCell[] = [
@@ -360,31 +334,31 @@ const headCells: readonly HeadCell[] = [
         id: "title",
         numeric: false,
         disablePadding: true,
-        label: "Tiêu đề"
+        label: "Mã nhân viên"
     },
     {
         id: "category",
         numeric: true,
         disablePadding: false,
-        label: "Danh mục"
+        label: "Họ tên"
     },
     {
         id: "writer",
         numeric: true,
         disablePadding: false,
-        label: "Người đăng"
+        label: "Ngày sinh"
     },
     {
         id: "date",
         numeric: true,
         disablePadding: false,
-        label: "Ngày đăng"
+        label: "Số điện thoại"
     },
     {
-        id: "status",
+        id: "password",
         numeric: true,
         disablePadding: false,
-        label: "Trạng thái"
+        label: "Mật khẩu"
     }
 ];
 
@@ -393,7 +367,7 @@ interface Data {
     date: string;
     writer: string;
     title: string;
-    status: number;
+    password: string;
 }
 
 type Order = "asc" | "desc";
@@ -418,38 +392,6 @@ interface EnhancedTableToolbarProps {
     numSelected: number;
 }
 
-interface StatusChipProps {
-    status?: Boolean;
-    sx?: object;
-}
-
-const handleClick = () => {
-    console.info("You clicked the Chip.");
-};
-
-const StyledChip = {
-    border: "none",
-    padding: "0rem 1rem",
-    "& .MuiChip-label": {
-        paddingRight: 0
-    },
-    "& svg": {
-        fontSize: "1rem",
-        marginLeft: "0px !important",
-        color: "inherit !important"
-    }
-};
-const StyledPushlished = {
-    backgroundColor: "#DCFCE7",
-    color: "#22C55E",
-    ...StyledChip
-};
-const StyledDraft = {
-    backgroundColor: "#FFEDD5",
-    color: "#F97316",
-    ...StyledChip
-};
-
 const StyledActionCell = {
     display: "flex"
 };
@@ -457,8 +399,8 @@ const StyledActionCell = {
 const EnhancedTableBox = styled(Box)(({ theme }) => ({
     width: "100%",
     marginTop: "20px",
-    border: "1px solid #176076",
-    borderRadius: "15px",
+    border: "1px solid #f2eae1",
+    borderRadius: "8px",
     overflow: "hidden",
     transition: "all 0.3s ease-in-out"
 }));

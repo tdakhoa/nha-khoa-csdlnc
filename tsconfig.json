@@ -27,7 +27,7 @@
         "src/theme.js",
         "src/createEmotionCache.js",
         "src/modules/Layout.jsx",
-        "src/modules/Profile.jsx",
+        "src/modules/DatLichHen.jsx",
         "src/modules/NewPost.jsx",
         "src/modules/AllStaffs.jsx",
         "src/modules/AllPosts.jsx",

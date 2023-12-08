@@ -18,25 +18,17 @@ import {
     useTheme,
     useMediaQuery
 } from "@mui/material";
-import { Delete, DeleteOutlined, EditOutlined, FilterList, VisibilityOutlined } from "@mui/icons-material";
+import { CreateOutlined, Delete, DeleteOutlined, FilterList, LockOutlined } from "@mui/icons-material";
 
 import { Typography } from "../../components";
 
-const createData = (
-    title: string,
-    category: string,
-    writer: string,
-    date: string,
-    time: string,
-    status: string
-): Data => {
+const createData = (title: string, category: string, writer: string, date: string, password: string): Data => {
     return {
         title,
         category,
         writer,
         date,
-        time,
-        status
+        password
     };
 };
 
@@ -133,7 +125,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
             }}>
             {numSelected > 0 ? (
                 <Typography sx={{ flex: "1 1 100%" }} size="p">
-                    {numSelected} cuộc hẹn đã được chọn
+                    {numSelected} nha sĩ đã được chọn
                 </Typography>
             ) : (
                 <></>
@@ -283,10 +275,7 @@ export default function EnhancedTable() {
                                                 <Typography size="p">{row.date}</Typography>
                                             </TableCell>
                                             <TableCell align="center">
-                                                <Typography size="p">{row.time}</Typography>
-                                            </TableCell>
-                                            <TableCell align="center">
-                                                <Typography size="p">{row.status}</Typography>
+                                                <Typography size="p">{row.password}</Typography>
                                             </TableCell>
                                             <TableCell align="center">
                                                 <ActionCell />
@@ -320,10 +309,10 @@ const ActionCell = () => {
     return (
         <Box sx={StyledActionCell}>
             <IconButton>
-                <VisibilityOutlined />
+                <LockOutlined />
             </IconButton>
             <IconButton>
-                <EditOutlined />
+                <CreateOutlined />
             </IconButton>
             <IconButton>
                 <DeleteOutlined />
@@ -333,11 +322,11 @@ const ActionCell = () => {
 };
 
 const rows = [
-    createData("Phan Văn Thức", "Lê Văn Sĩ", "Hồ Ngọc Đức", "P001", "14:00", "Cuộc hẹn mới"),
-    createData("Trần Hoàng Sinh", "Trần Hoàng Ý", "Lê Văn Sĩ", "P002", "15:00", "Tái khám"),
-    createData("Nguyễn Tấn Hùng", "Lê Văn Sĩ", "Trần Hoàng Ý", "P003", "17:30", "Cuộc hẹn mới"),
-    createData("Trần Nhân Phước", "Trần Hoàng Ý", "Hồ Ngọc Đức", "P004", "12:00", "Tái khám"),
-    createData("Lê Thiên Anh", "Lê Văn Sĩ", "Trần Hoàng Ý", "P005", "9:30", "Tái khám")
+    createData("NS001", "Phan Văn Thức", "11/12/2001", "0908765423", "********"),
+    createData("NS002", "Trần Hoàng Sinh", "15/03/1998", "098645728", "********"),
+    createData("NS003", "Nguyễn Tấn Hùng", "12/09/2000", "038546725", "********"),
+    createData("NS004", "Trần Nhân Phước", "01/05/1999", "087684257", "********"),
+    createData("NS005", "Lê Thiên Anh", "11/05/2001", "090555476", "********")
 ];
 
 const headCells: readonly HeadCell[] = [
@@ -345,37 +334,31 @@ const headCells: readonly HeadCell[] = [
         id: "title",
         numeric: false,
         disablePadding: true,
-        label: "Họ Tên"
+        label: "Mã nha sĩ"
     },
     {
         id: "category",
         numeric: true,
         disablePadding: false,
-        label: "Nha sĩ"
+        label: "Họ tên"
     },
     {
         id: "writer",
         numeric: true,
         disablePadding: false,
-        label: "Trợ khám"
+        label: "Ngày sinh"
     },
     {
         id: "date",
         numeric: true,
         disablePadding: false,
-        label: "Phòng"
+        label: "Số điện thoại"
     },
     {
-        id: "time",
+        id: "password",
         numeric: true,
         disablePadding: false,
-        label: "Thời gian"
-    },
-    {
-        id: "status",
-        numeric: true,
-        disablePadding: false,
-        label: "Tình trạng"
+        label: "Mật khẩu"
     }
 ];
 
@@ -384,8 +367,7 @@ interface Data {
     date: string;
     writer: string;
     title: string;
-    time: string;
-    status: string;
+    password: string;
 }
 
 type Order = "asc" | "desc";

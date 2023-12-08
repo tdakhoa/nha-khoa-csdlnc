@@ -12,39 +12,22 @@ import {
     TableRow,
     TableSortLabel,
     Toolbar,
-    Chip,
     Checkbox,
     IconButton,
     Tooltip,
     useTheme,
     useMediaQuery
 } from "@mui/material";
-import {
-    CancelOutlined,
-    CheckCircleOutline,
-    Delete,
-    DeleteOutlined,
-    EditOutlined,
-    FilterList
-} from "@mui/icons-material";
+import { CloseOutlined, Delete, Done, FilterList } from "@mui/icons-material";
 
 import { Typography } from "../../components";
 
-const createData = (
-    id: string,
-    name: string,
-    username: string,
-    password: string,
-    role: string,
-    status: number
-): Data => {
+const createData = (title: string, category: string, writer: string, date: string): Data => {
     return {
-        id,
-        name,
-        username,
-        password,
-        role,
-        status
+        title,
+        category,
+        writer,
+        date
     };
 };
 
@@ -79,7 +62,7 @@ function stableSort<T>(array: readonly T[], comparator: (a: T, b: T) => number) 
     return stabilizedThis.map((el) => el[0]);
 }
 
-const EnhancedTableHead = (props: EnhancedTableProps) => {
+function EnhancedTableHead(props: EnhancedTableProps) {
     const theme = useTheme();
     const matches = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -101,9 +84,6 @@ const EnhancedTableHead = (props: EnhancedTableProps) => {
                 </TableCell>
                 {headCells.map((headCell) => (
                     <TableCell
-                        sx={{
-                            whiteSpace: "nowrap"
-                        }}
                         key={headCell.id}
                         align="center"
                         padding={headCell.disablePadding ? "none" : "normal"}
@@ -127,7 +107,7 @@ const EnhancedTableHead = (props: EnhancedTableProps) => {
             </TableRow>
         </TableHead>
     );
-};
+}
 
 const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
     const { numSelected } = props;
@@ -144,7 +124,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
             }}>
             {numSelected > 0 ? (
                 <Typography sx={{ flex: "1 1 100%" }} size="p">
-                    {numSelected} nhân sự đã được chọn
+                    {numSelected} yêu cầu đã được chọn
                 </Typography>
             ) : (
                 <></>
@@ -168,7 +148,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
 
 export default function EnhancedTable() {
     const [order, setOrder] = React.useState<Order>("asc");
-    const [orderBy, setOrderBy] = React.useState<keyof Data>("name");
+    const [orderBy, setOrderBy] = React.useState<keyof Data>("category");
     const [selected, setSelected] = React.useState<readonly string[]>([]);
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
@@ -182,7 +162,7 @@ export default function EnhancedTable() {
 
     const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.checked) {
-            const newSelected = rows.map((n) => n.id);
+            const newSelected = rows.map((n) => n.title);
             setAllowAnimation(true);
             setSelected(newSelected);
             return;
@@ -190,12 +170,12 @@ export default function EnhancedTable() {
         setSelected([]);
     };
 
-    const handleClick = (event: React.MouseEvent<unknown>, id: string) => {
-        const selectedIndex = selected.indexOf(id);
+    const handleClick = (event: React.MouseEvent<unknown>, title: string) => {
+        const selectedIndex = selected.indexOf(title);
         let newSelected: readonly string[] = [];
 
         if (selectedIndex === -1) {
-            newSelected = newSelected.concat(selected, id);
+            newSelected = newSelected.concat(selected, title);
         } else if (selectedIndex === 0) {
             newSelected = newSelected.concat(selected.slice(1));
         } else if (selectedIndex === selected.length - 1) {
@@ -203,6 +183,7 @@ export default function EnhancedTable() {
         } else if (selectedIndex > 0) {
             newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
         }
+
         setAllowAnimation(true);
         setSelected(newSelected);
     };
@@ -261,7 +242,7 @@ export default function EnhancedTable() {
                             {stableSort(rows, getComparator(order, orderBy))
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 .map((row, index) => {
-                                    const isItemSelected = isSelected(row.id);
+                                    const isItemSelected = isSelected(row.title);
                                     const labelId = `enhanced-table-checkbox-${index}`;
 
                                     return (
@@ -271,34 +252,26 @@ export default function EnhancedTable() {
                                             role="checkbox"
                                             aria-checked={isItemSelected}
                                             tabIndex={-1}
-                                            key={row.id}
+                                            key={row.title}
                                             selected={isItemSelected}>
                                             <TableCell padding="checkbox">
                                                 <Checkbox
-                                                    onClick={(event) => handleClick(event, row.id)}
+                                                    onClick={(event: any) => handleClick(event, row.title)}
                                                     color="primary"
                                                     checked={isItemSelected}
                                                 />
                                             </TableCell>
-                                            <TableCell
-                                                component="th"
-                                                id={labelId}
-                                                scope="row"
-                                                padding="none"
-                                                align="center">
-                                                <Typography size="p">{row.name}</Typography>
+                                            <TableCell align="center">
+                                                <Typography size="p">{row.title}</Typography>
                                             </TableCell>
                                             <TableCell align="center">
-                                                <Typography size="p">{row.username}</Typography>
+                                                <Typography size="p">{row.category}</Typography>
                                             </TableCell>
                                             <TableCell align="center">
-                                                <Typography size="p">{row.password}</Typography>
+                                                <Typography size="p">{row.writer}</Typography>
                                             </TableCell>
                                             <TableCell align="center">
-                                                <Typography size="p">{row.role}</Typography>
-                                            </TableCell>
-                                            <TableCell align="center">
-                                                <StatusChip status={row.status == 1} />
+                                                <Typography size="p">{row.date}</Typography>
                                             </TableCell>
                                             <TableCell align="center">
                                                 <ActionCell />
@@ -328,111 +301,59 @@ export default function EnhancedTable() {
     );
 }
 
-const StatusChip = ({ status = true, sx = {}, ...props }: StatusChipProps) => {
-    const handleClick = () => {
-        console.info("You clicked the Chip.");
-    };
-    return (
-        <Chip
-            label={status == true ? "Hoạt động" : "Đình chỉ"}
-            icon={status == true ? <CheckCircleOutline /> : <CancelOutlined />}
-            variant="outlined"
-            sx={status == true ? StyledPushlished : StyledDraft}
-            onClick={handleClick}
-        />
-    );
-};
-
 const ActionCell = () => {
     return (
         <Box sx={StyledActionCell}>
             <IconButton>
-                <EditOutlined />
+                <Done />
             </IconButton>
             <IconButton>
-                <DeleteOutlined />
+                <CloseOutlined />
             </IconButton>
         </Box>
     );
 };
 
 const rows = [
-    createData("0", "Harry Peter", "zmoore", "akuokesip", "Admin", 1),
-    createData("1", "Franco Delort", "eliane03", "ahmadyani1234", "BTV", 2),
-    createData("2", "Lawerence Munford", "nblock", "welcome123", "BTV", 2),
-    createData("3", "Harry Peter", "anya.morar", "welcome123", "BTV", 1),
-    createData("4", "Alfredo Vetrovs", "ronny18", "akuokesip", "BTV", 1)
+    createData("Phan Văn Thức", "Lê Văn Sĩ", "Tiền sử bệnh tiểu đường", "14:00"),
+    createData("Trần Hoàng Sinh", "Trần Hoàng Ý", "Tiền sử bệnh tim mạch", "09:50"),
+    createData("Nguyễn Tấn Hùng", "Lê Văn Sĩ", "Tiền sử bệnh ung thư", "15:00"),
+    createData("Trần Nhân Phước", "Trần Hoàng Ý", "Tiền sử bệnh tâm thần", "8:15"),
+    createData("Lê Thiên Anh", "Lê Văn Sĩ", "Tiền sử bệnh đau dạ dày", "19:15")
 ];
 
 const headCells: readonly HeadCell[] = [
     {
-        id: "name",
+        id: "title",
         numeric: false,
         disablePadding: true,
-        label: "Tên"
+        label: "Tên bệnh nhân"
     },
     {
-        id: "username",
+        id: "category",
         numeric: true,
         disablePadding: false,
-        label: "Tên đăng nhập"
+        label: "Ngày hẹn"
     },
     {
-        id: "password",
+        id: "writer",
         numeric: true,
         disablePadding: false,
-        label: "Mật khẩu"
+        label: "Ghi chú"
     },
     {
-        id: "role",
+        id: "date",
         numeric: true,
         disablePadding: false,
-        label: "Vai trò"
-    },
-    {
-        id: "status",
-        numeric: true,
-        disablePadding: false,
-        label: "Trạng thái"
+        label: "Thời gian yêu cầu"
     }
 ];
 
-const StyledActionCell = {
-    display: "flex"
-};
-
-const StyledChip = {
-    border: "none",
-    padding: "0rem 1rem",
-    "& .MuiChip-label": {
-        paddingRight: 0
-    },
-    "& svg": {
-        fontSize: "1rem",
-        marginLeft: "0px !important",
-        color: "inherit !important"
-    }
-};
-
-const StyledPushlished = {
-    backgroundColor: "#DCFCE7",
-    color: "#22C55E",
-    ...StyledChip
-};
-
-const StyledDraft = {
-    backgroundColor: "#FEE2E2",
-    color: "#EF4444",
-    ...StyledChip
-};
-
 interface Data {
-    id: string;
-    name: string;
-    username: string;
-    password: string;
-    role: string;
-    status: number;
+    category: string;
+    date: string;
+    writer: string;
+    title: string;
 }
 
 type Order = "asc" | "desc";
@@ -456,16 +377,16 @@ interface EnhancedTableProps {
 interface EnhancedTableToolbarProps {
     numSelected: number;
 }
-interface StatusChipProps {
-    status?: Boolean;
-    sx?: object;
-}
+
+const StyledActionCell = {
+    display: "flex"
+};
 
 const EnhancedTableBox = styled(Box)(({ theme }) => ({
     width: "100%",
     marginTop: "20px",
-    border: "1px solid #176076",
-    borderRadius: "15px",
+    border: "1px solid #f2eae1",
+    borderRadius: "8px",
     overflow: "hidden",
     transition: "all 0.3s ease-in-out"
 }));

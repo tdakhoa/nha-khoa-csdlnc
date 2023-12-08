@@ -5,6 +5,9 @@ import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import { CacheProvider } from "@emotion/react";
 import { SnackbarProvider } from "notistack";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import "dayjs/locale/en-gb";
 
 import theme from "../src/theme";
 import createEmotionCache from "../src/createEmotionCache";
@@ -27,8 +30,10 @@ export default function MyApp(props) {
             </Head>
             <ThemeProvider theme={theme}>
                 <SnackbarProvider autoHideDuration={2000}>
-                    <CssBaseline />
-                    <Component {...pageProps} />
+                    <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="en-gb">
+                        <CssBaseline />
+                        <Component {...pageProps} />
+                    </LocalizationProvider>
                 </SnackbarProvider>
             </ThemeProvider>
         </CacheProvider>

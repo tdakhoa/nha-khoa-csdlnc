@@ -2,7 +2,7 @@ import { useState } from "react";
 import { styled, Box, Grid } from "@mui/material";
 import { AccessTimeOutlined, CancelOutlined, SaveOutlined } from "@mui/icons-material";
 
-import { Button, Dropdown, TextField, Typography } from "../components";
+import { Button, TextField, Typography } from "../components";
 import ToggleDrawer from "./components/Drawer";
 import TextEditor from "../components/Input/TextEditor";
 import Popup from "./components/Popup";
@@ -72,9 +72,7 @@ const NewPost = () => {
                             onChange={(e) => handleChange(e, 0)}
                         />
                     </Grid>
-                    <Grid item xs={12} md={6}>
-                        <Dropdown label="Danh mục" placeholder="Chọn danh mục" data={data} setData={setData} />
-                    </Grid>
+
                     <Grid item xs={12} md={6}>
                         <TextField
                             label="Từ khoá"
