@@ -1,13 +1,31 @@
-import React from "react";
+import { useState } from "react";
 import Link from "next/link";
-import { Box, styled } from "@mui/material";
+import { Box, Dialog, DialogActions, DialogContent, DialogTitle, Grid, styled } from "@mui/material";
 import { CreateOutlined } from "@mui/icons-material";
 
-import { Button, Typography } from "../components";
+import { Button, TextField, Typography } from "../components";
 import ToggleDrawer from "./components/Drawer";
 import ThuocTable from "./components/ThuocTable";
 
 const QuanLyThuoc = () => {
+    const [open, setOpen] = useState(false);
+    const [data, setData] = useState(fetchData);
+    const [render, setRender] = useState(false);
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
+    const handleOpen = () => {
+        setOpen(true);
+    };
+
+    const handleChange = (e, i) => {
+        fetchData[i].value = e.currentTarget.value;
+        setData(fetchData);
+        setRender(!render);
+    };
+
     return (
         <Root>
             <ToggleDrawer />
@@ -22,20 +40,39 @@ const QuanLyThuoc = () => {
                             Quản lý thuốc
                         </Typography>
                     </Box>
-                    <Box sx={{ display: "flex" }}>
-                        <Link href="/new-post">
-                            <Button
-                                bgcolor="secondary"
-                                borderradius="10px"
-                                endIcon={<CreateOutlined sx={{ fontSize: "1.4rem", pl: "0.3rem" }} />}>
-                                <Typography size="p">Thêm hồ sơ bệnh nhân</Typography>
-                            </Button>
-                        </Link>
-                    </Box>
+
+                    <Button
+                        bgcolor="secondary"
+                        borderradius="10px"
+                        endIcon={<CreateOutlined sx={{ fontSize: "1.4rem", pl: "0.3rem" }} />}
+                        onClick={handleOpen}>
+                        <Typography size="p">Thêm loại thuốc</Typography>
+                    </Button>
                 </HeaderBox>
 
-                <ThuocTable />
+                <ThuocTable handleOpen={handleOpen} />
             </Box>
+
+            <Dialog open={open} onClose={handleClose}>
+                <DialogTitle>Thêm thuốc</DialogTitle>
+                <DialogContent>
+                    <InputContainer container spacing={3}>
+                        {data.map((item, i) => (
+                            <Grid item xs={12} sm={6} key={i}>
+                                <TextField label={item.label} value={item.value} onChange={(e) => handleChange(e, i)} />
+                            </Grid>
+                        ))}
+                    </InputContainer>
+                </DialogContent>
+                <DialogActions>
+                    <Button bgcolor="gray" onClick={handleClose} sx={{ width: "5rem" }}>
+                        Thoát
+                    </Button>
+                    <Button bgcolor="secondary" onClick={handleClose} sx={{ width: "5rem" }}>
+                        Thêm
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Root>
     );
 };
@@ -54,5 +91,25 @@ const HeaderBox = styled(Box)(({ theme }) => ({
     [theme.breakpoints.down("md")]: {
         alignItems: "center",
         flexDirection: "column"
+    }
+}));
+
+const fetchData = [
+    { label: "ID thuốc", value: "" },
+    { label: "Tên thuốc", value: "" },
+    { label: "Ngày sản xuất", value: "" },
+    { label: "Ngày hết hạn", value: "" },
+    { label: "Đơn giá", value: "" },
+    { label: "Chỉ định", value: "" },
+    { label: "Số lượng tồn", value: "" },
+    { label: "Đơn vị tính", value: "" }
+];
+
+const InputContainer = styled(Grid)(({ theme }) => ({
+    width: "100%",
+    marginLeft: "0",
+    padding: "12px 16px",
+    [theme.breakpoints.down("sm")]: {
+        paddingLeft: 0
     }
 }));

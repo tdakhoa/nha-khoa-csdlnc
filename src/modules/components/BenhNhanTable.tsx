@@ -16,16 +16,29 @@ import {
     IconButton,
     Tooltip,
     useTheme,
-    useMediaQuery
+    useMediaQuery,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    Grid,
+    DialogActions
 } from "@mui/material";
 import { CreateOutlined, Delete, DeleteOutlined, FilterList, LockOutlined } from "@mui/icons-material";
 
-import { Typography } from "../../components";
+import { Button, TextField, Typography } from "../../components";
 
-const createData = (title: string, category: string, writer: string, date: string, password: string): Data => {
+const createData = (
+    title: string,
+    category: string,
+    gender: string,
+    writer: string,
+    date: string,
+    password: string
+): Data => {
     return {
         title,
         category,
+        gender,
         writer,
         date,
         password
@@ -154,6 +167,23 @@ export default function EnhancedTable() {
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
     const [allowAnimation, setAllowAnimation] = React.useState(false);
+    const [open, setOpen] = React.useState(false);
+    const [data, setData] = React.useState(fetchData);
+    const [render, setRender] = React.useState(false);
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
+    const handleOpen = () => {
+        setOpen(true);
+    };
+
+    const handleChange = (e: any, i: any) => {
+        fetchData[i].value = e.currentTarget.value;
+        setData(fetchData);
+        setRender(!render);
+    };
 
     const handleRequestSort = (event: React.MouseEvent<unknown>, property: keyof Data) => {
         const isAsc = orderBy === property && order === "asc";
@@ -269,6 +299,9 @@ export default function EnhancedTable() {
                                                 <Typography size="p">{row.category}</Typography>
                                             </TableCell>
                                             <TableCell align="center">
+                                                <Typography size="p">{row.gender}</Typography>
+                                            </TableCell>
+                                            <TableCell align="center">
                                                 <Typography size="p">{row.writer}</Typography>
                                             </TableCell>
                                             <TableCell align="center">
@@ -278,7 +311,7 @@ export default function EnhancedTable() {
                                                 <Typography size="p">{row.password}</Typography>
                                             </TableCell>
                                             <TableCell align="center">
-                                                <ActionCell />
+                                                <ActionCell onClick={handleOpen} />
                                             </TableCell>
                                         </TableRow>
                                     );
@@ -301,18 +334,39 @@ export default function EnhancedTable() {
                     onRowsPerPageChange={handleChangeRowsPerPage}
                 />
             </Box>
+
+            <Dialog open={open} onClose={handleClose}>
+                <DialogTitle>Cập nhật hồ sơ</DialogTitle>
+                <DialogContent>
+                    <InputContainer container spacing={3}>
+                        {data.map((item, i) => (
+                            <Grid item xs={12} sm={i == 4 ? 12 : 6} key={i}>
+                                <TextField label={item.label} value={item.value} onChange={(e) => handleChange(e, i)} />
+                            </Grid>
+                        ))}
+                    </InputContainer>
+                </DialogContent>
+                <DialogActions>
+                    <Button bgcolor="gray" onClick={handleClose} sx={{ width: "7rem" }}>
+                        Thoát
+                    </Button>
+                    <Button bgcolor="secondary" onClick={handleClose} sx={{ width: "7rem" }}>
+                        Cập nhật
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </EnhancedTableBox>
     );
 }
 
-const ActionCell = () => {
+const ActionCell = ({ onClick }: any) => {
     return (
         <Box sx={StyledActionCell}>
             <IconButton>
                 <LockOutlined />
             </IconButton>
             <IconButton>
-                <CreateOutlined />
+                <CreateOutlined onClick={onClick} />
             </IconButton>
             <IconButton>
                 <DeleteOutlined />
@@ -322,11 +376,11 @@ const ActionCell = () => {
 };
 
 const rows = [
-    createData("KH001", "Phan Văn Thức", "11/12/2001", "0908765423", "********"),
-    createData("KH002", "Trần Hoàng Sinh", "15/03/1998", "098645728", "********"),
-    createData("KH003", "Nguyễn Tấn Hùng", "12/09/2000", "038546725", "********"),
-    createData("KH004", "Trần Nhân Phước", "01/05/1999", "087684257", "********"),
-    createData("KH005", "Lê Thiên Anh", "11/05/2001", "090555476", "********")
+    createData("KH001", "Phan Văn Thức", "Nam", "11/12/2001", "0908765423", "********"),
+    createData("KH002", "Trần Hoàng Sinh", "Nam", "15/03/1998", "098645728", "********"),
+    createData("KH003", "Nguyễn Tấn Hùng", "Nam", "12/09/2000", "038546725", "********"),
+    createData("KH004", "Trần Nhân Phước", "Nam", "01/05/1999", "087684257", "********"),
+    createData("KH005", "Lê Thiên Anh", "Nam", "11/05/2001", "090555476", "********")
 ];
 
 const headCells: readonly HeadCell[] = [
@@ -341,6 +395,12 @@ const headCells: readonly HeadCell[] = [
         numeric: true,
         disablePadding: false,
         label: "Họ tên"
+    },
+    {
+        id: "gender",
+        numeric: true,
+        disablePadding: false,
+        label: "Giới tính"
     },
     {
         id: "writer",
@@ -365,6 +425,7 @@ const headCells: readonly HeadCell[] = [
 interface Data {
     category: string;
     date: string;
+    gender: string;
     writer: string;
     title: string;
     password: string;
@@ -404,3 +465,22 @@ const EnhancedTableBox = styled(Box)(({ theme }) => ({
     overflow: "hidden",
     transition: "all 0.3s ease-in-out"
 }));
+
+const InputContainer = styled(Grid)(({ theme }) => ({
+    width: "100%",
+    marginLeft: "0",
+    padding: "12px 16px",
+    [theme.breakpoints.down("sm")]: {
+        paddingLeft: 0
+    }
+}));
+
+const fetchData = [
+    { label: "Họ và tên", value: "" },
+    { label: "Ngày tháng năm sinh", value: "" },
+    { label: "Giới tính", value: "" },
+    { label: "Thông tin sức khoẻ răng miệng ", value: "" },
+    { label: "Dị ứng/chống chỉ định", value: "" },
+    { label: "Tổng tiền điều trị", value: "" },
+    { label: "Tổng tiền đã thanh toán", value: "" }
+];

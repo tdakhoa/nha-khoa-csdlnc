@@ -16,11 +16,16 @@ import {
     IconButton,
     Tooltip,
     useTheme,
-    useMediaQuery
+    useMediaQuery,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    Grid,
+    DialogActions
 } from "@mui/material";
 import { CreateOutlined, Delete, DeleteOutlined, FilterList, LockOutlined } from "@mui/icons-material";
 
-import { Typography } from "../../components";
+import { Button, TextField, Typography } from "../../components";
 
 const createData = (
     title: string,
@@ -166,6 +171,23 @@ export default function EnhancedTable() {
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
     const [allowAnimation, setAllowAnimation] = React.useState(false);
+    const [open, setOpen] = React.useState(false);
+    const [data, setData] = React.useState(fetchData);
+    const [render, setRender] = React.useState(false);
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
+    const handleOpen = () => {
+        setOpen(true);
+    };
+
+    const handleChange = (e: any, i: any) => {
+        fetchData[i].value = e.currentTarget.value;
+        setData(fetchData);
+        setRender(!render);
+    };
 
     const handleRequestSort = (event: React.MouseEvent<unknown>, property: keyof Data) => {
         const isAsc = orderBy === property && order === "asc";
@@ -299,7 +321,7 @@ export default function EnhancedTable() {
                                                 <Typography size="p">{row.count}</Typography>
                                             </TableCell>
                                             <TableCell align="center">
-                                                <ActionCell />
+                                                <ActionCell onClick={handleOpen} />
                                             </TableCell>
                                         </TableRow>
                                     );
@@ -322,15 +344,36 @@ export default function EnhancedTable() {
                     onRowsPerPageChange={handleChangeRowsPerPage}
                 />
             </Box>
+
+            <Dialog open={open} onClose={handleClose}>
+                <DialogTitle>Cập nhật thuốc</DialogTitle>
+                <DialogContent>
+                    <InputContainer container spacing={3}>
+                        {data.map((item, i) => (
+                            <Grid item xs={12} sm={6} key={i}>
+                                <TextField label={item.label} value={item.value} onChange={(e) => handleChange(e, i)} />
+                            </Grid>
+                        ))}
+                    </InputContainer>
+                </DialogContent>
+                <DialogActions>
+                    <Button bgcolor="gray" onClick={handleClose} sx={{ width: "7rem" }}>
+                        Thoát
+                    </Button>
+                    <Button bgcolor="secondary" onClick={handleClose} sx={{ width: "7rem" }}>
+                        Cập nhật
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </EnhancedTableBox>
     );
 }
 
-const ActionCell = () => {
+const ActionCell = ({ onClick }: any) => {
     return (
         <Box sx={StyledActionCell}>
             <IconButton>
-                <CreateOutlined />
+                <CreateOutlined onClick={onClick} />
             </IconButton>
             <IconButton>
                 <DeleteOutlined />
@@ -443,3 +486,23 @@ const EnhancedTableBox = styled(Box)(({ theme }) => ({
     overflow: "hidden",
     transition: "all 0.3s ease-in-out"
 }));
+
+const InputContainer = styled(Grid)(({ theme }) => ({
+    width: "100%",
+    marginLeft: "0",
+    padding: "12px 16px",
+    [theme.breakpoints.down("sm")]: {
+        paddingLeft: 0
+    }
+}));
+
+const fetchData = [
+    { label: "ID thuốc", value: "" },
+    { label: "Tên thuốc", value: "" },
+    { label: "Ngày sản xuất", value: "" },
+    { label: "Ngày hết hạn", value: "" },
+    { label: "Đơn giá", value: "" },
+    { label: "Chỉ định", value: "" },
+    { label: "Số lượng tồn", value: "" },
+    { label: "Đơn vị tính", value: "" }
+];
