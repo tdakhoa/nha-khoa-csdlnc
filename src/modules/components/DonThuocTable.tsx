@@ -23,26 +23,25 @@ import {
     Grid,
     DialogActions
 } from "@mui/material";
-import { Delete, DeleteOutlined, FilterList, LockOutlined, VisibilityOutlined } from "@mui/icons-material";
+import {
+    CreateOutlined,
+    Delete,
+    DeleteOutlined,
+    FilterList,
+    LockOutlined,
+    VisibilityOutlined
+} from "@mui/icons-material";
 
 import { Button, TextField, Typography } from "../../components";
 import Link from "next/link";
 
-const createData = (
-    title: string,
-    category: string,
-    gender: string,
-    writer: string,
-    date: string,
-    password: string
-): Data => {
+const createData = (title: string, category: string, gender: string, writer: string, date: string): Data => {
     return {
         title,
         category,
         gender,
         writer,
-        date,
-        password
+        date
     };
 };
 
@@ -139,7 +138,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
             }}>
             {numSelected > 0 ? (
                 <Typography sx={{ flex: "1 1 100%" }} size="p">
-                    {numSelected} bệnh nhân đã được chọn
+                    {numSelected} kế hoạch đã được chọn
                 </Typography>
             ) : (
                 <></>
@@ -308,9 +307,7 @@ export default function EnhancedTable() {
                                             <TableCell align="center">
                                                 <Typography size="p">{row.date}</Typography>
                                             </TableCell>
-                                            <TableCell align="center">
-                                                <Typography size="p">{row.password}</Typography>
-                                            </TableCell>
+
                                             <TableCell align="center">
                                                 <ActionCell onClick={handleOpen} />
                                             </TableCell>
@@ -340,20 +337,14 @@ export default function EnhancedTable() {
                 <DialogTitle>
                     <Box sx={{ display: "flex", width: "100%", justifyContent: "space-between", alignItems: "center" }}>
                         <Typography weight="bold" size="large">
-                            Cập nhật hồ sơ
+                            Cập nhật đơn thuốc
                         </Typography>
-
-                        <Link href="/ho-so-benh-nhan/thong-tin-chi-tiet">
-                            <Button bgcolor="secondary" sx={{ borderRadius: "8px" }}>
-                                Thông tin chi tiết
-                            </Button>
-                        </Link>
                     </Box>
                 </DialogTitle>
                 <DialogContent>
                     <InputContainer container spacing={3}>
                         {data.map((item, i) => (
-                            <Grid item xs={12} sm={i == 4 ? 12 : 6} key={i}>
+                            <Grid item xs={12} sm={i == 2 ? 12 : 6} key={i}>
                                 <TextField label={item.label} value={item.value} onChange={(e) => handleChange(e, i)} />
                             </Grid>
                         ))}
@@ -376,10 +367,7 @@ const ActionCell = ({ onClick }: any) => {
     return (
         <Box sx={StyledActionCell}>
             <IconButton>
-                <LockOutlined />
-            </IconButton>
-            <IconButton>
-                <VisibilityOutlined onClick={onClick} />
+                <CreateOutlined onClick={onClick} />
             </IconButton>
             <IconButton>
                 <DeleteOutlined />
@@ -389,11 +377,11 @@ const ActionCell = ({ onClick }: any) => {
 };
 
 const rows = [
-    createData("KH001", "Phan Văn Thức", "Nam", "11/12/2001", "0908765423", "********"),
-    createData("KH002", "Trần Hoàng Sinh", "Nam", "15/03/1998", "098645728", "********"),
-    createData("KH003", "Nguyễn Tấn Hùng", "Nam", "12/09/2000", "038546725", "********"),
-    createData("KH004", "Trần Nhân Phước", "Nam", "01/05/1999", "087684257", "********"),
-    createData("KH005", "Lê Thiên Anh", "Nam", "11/05/2001", "090555476", "********")
+    createData("DT001", "Điều trị tuỷ", "20/11/2023", "Trần Văn Nam", "Hoàng Thị Ngọc"),
+    createData("DT002", "Nhổ răng khôn", "20/11/2023", "Phan Văn Sĩ", "Nguyễn Phúc Khang"),
+    createData("DT003", "Nhổ răng cửa", "20/11/2023", "Trần Văn Nam", "Nguyễn Phúc Khang"),
+    createData("DT004", "Chữa viêm nướu", "20/11/2023", "Phan Văn Sĩ", "Trần Tôn Hà"),
+    createData("DT005", "Trồng răng sứ", "20/11/2023", "Phan Văn Sĩ", "Trần Tôn Hà")
 ];
 
 const headCells: readonly HeadCell[] = [
@@ -401,37 +389,31 @@ const headCells: readonly HeadCell[] = [
         id: "title",
         numeric: false,
         disablePadding: true,
-        label: "ID khách hàng"
+        label: "ID thuốc"
     },
     {
         id: "category",
         numeric: true,
         disablePadding: false,
-        label: "Họ tên"
+        label: "Tên thuốc"
     },
     {
         id: "gender",
         numeric: true,
         disablePadding: false,
-        label: "Giới tính"
+        label: "Đơn vị tính"
     },
     {
         id: "writer",
         numeric: true,
         disablePadding: false,
-        label: "Ngày sinh"
+        label: "Số lượng"
     },
     {
         id: "date",
         numeric: true,
         disablePadding: false,
-        label: "Số điện thoại"
-    },
-    {
-        id: "password",
-        numeric: true,
-        disablePadding: false,
-        label: "Mật khẩu"
+        label: "Giá tiền"
     }
 ];
 
@@ -441,7 +423,6 @@ interface Data {
     gender: string;
     writer: string;
     title: string;
-    password: string;
 }
 
 type Order = "asc" | "desc";
@@ -489,11 +470,9 @@ const InputContainer = styled(Grid)(({ theme }) => ({
 }));
 
 const fetchData = [
-    { label: "Họ và tên", value: "" },
-    { label: "Ngày tháng năm sinh", value: "" },
-    { label: "Giới tính", value: "" },
-    { label: "Thông tin răng miệng ", value: "" },
-    { label: "Dị ứng/chống chỉ định", value: "" },
-    { label: "Tổng tiền điều trị", value: "" },
-    { label: "Tổng tiền đã thanh toán", value: "" }
+    { label: "ID thuốc", value: "" },
+    { label: "Đơn vị tính", value: "" },
+    { label: "Tên thuốc", value: "" },
+    { label: "Số lượng", value: "" },
+    { label: "Giá tiền", value: "" }
 ];

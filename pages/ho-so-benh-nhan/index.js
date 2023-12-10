@@ -1,6 +1,6 @@
 import React from "react";
 import Head from "next/head";
-import HoSoBenhNhan from "../src/modules/HoSoBenhNhan";
+import HoSoBenhNhan from "../../src/modules/HoSoBenhNhan";
 
 export default function HomePage() {
     return (
