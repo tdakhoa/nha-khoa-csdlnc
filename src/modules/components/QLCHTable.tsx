@@ -20,6 +20,7 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import {
+  Css,
   Delete,
   DeleteOutlined,
   EditOutlined,
@@ -196,8 +197,8 @@ export default function EnhancedTable() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [allowAnimation, setAllowAnimation] = React.useState(false);
-  const [schedule, setSchedule] = React.useState([]);
-
+  const schedule =
+    useFetch("http://localhost:5000/LocCuocHenTrongNgay").data || [];
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
     property: keyof Data
@@ -209,7 +210,7 @@ export default function EnhancedTable() {
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      const newSelected = rows.map((n) => n.title);
+      const newSelected = schedule.map((n: any) => n?.MaLichHen);
       setAllowAnimation(true);
       setSelected(newSelected);
       return;
@@ -250,7 +251,7 @@ export default function EnhancedTable() {
   };
 
   const isSelected = (title: string) => selected.indexOf(title) !== -1;
-  useFetch("http://localhost:5000/LocCuocHenTrongNgay");
+
   return (
     <EnhancedTableBox>
       {selected.length > 0 ? (
@@ -298,13 +299,13 @@ export default function EnhancedTable() {
               orderBy={orderBy}
               onSelectAllClick={handleSelectAllClick}
               onRequestSort={handleRequestSort}
-              rowCount={rows.length}
+              rowCount={schedule.length}
             />
             <TableBody>
-              {stableSort(rows, getComparator(order, orderBy))
+              {stableSort(schedule, getComparator(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row, index) => {
-                  const isItemSelected = isSelected(row.title);
+                .map((row: any, index) => {
+                  const isItemSelected = isSelected(row.MaLichHen);
                   const labelId = `enhanced-table-checkbox-${index}`;
 
                   return (
@@ -314,35 +315,74 @@ export default function EnhancedTable() {
                       role="checkbox"
                       aria-checked={isItemSelected}
                       tabIndex={-1}
-                      key={row.title}
+                      key={row.MaLichHen}
                       selected={isItemSelected}
                     >
                       <TableCell padding="checkbox">
                         <Checkbox
                           onClick={(event: any) =>
-                            handleClick(event, row.title)
+                            handleClick(event, row.MaLichHen)
                           }
                           color="primary"
                           checked={isItemSelected}
                         />
                       </TableCell>
-                      <TableCell align="center">
-                        <Typography size="p">{row.title}</Typography>
+                      <TableCell align="left">
+                        <Typography
+                          sx={{
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            display: "-webkit-box",
+                            WebkitLineClamp: "2",
+                            WebkitBoxOrient: "vertical",
+                            whiteSpace: "nowrap",
+                            maxWidth: "10rem",
+                          }}
+                          size="p"
+                        >
+                          {row.TenBN}
+                        </Typography>
                       </TableCell>
                       <TableCell align="center">
-                        <Typography size="p">{row.category}</Typography>
+                        <Typography size="p">{row.KhamChinh}</Typography>
                       </TableCell>
                       <TableCell align="center">
-                        <Typography size="p">{row.writer}</Typography>
+                        <Typography size="p">{row.TroKham}</Typography>
                       </TableCell>
                       <TableCell align="center">
-                        <Typography size="p">{row.date}</Typography>
+                        <Typography size="p">{row.MaPK}</Typography>
+                      </TableCell>
+                      <TableCell align="left">
+                        <Typography
+                          size="p"
+                          sx={{
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            display: "-webkit-box",
+                            WebkitLineClamp: "2",
+                            WebkitBoxOrient: "vertical",
+                            whiteSpace: "nowrap",
+                            maxWidth: "5rem",
+                          }}
+                        >
+                          {row.Ngay}
+                        </Typography>
                       </TableCell>
                       <TableCell align="center">
-                        <Typography size="p">{row.time}</Typography>
-                      </TableCell>
-                      <TableCell align="center">
-                        <Typography size="p">{row.status}</Typography>
+                        <Typography
+                          size="p"
+                          sx={{
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            display: "-webkit-box",
+                            WebkitLineClamp: "2",
+                            WebkitBoxOrient: "vertical",
+                            whiteSpace: "nowrap",
+                            maxWidth: "2rem",
+                          }}
+                        >
+                          {row.TinhTrang}
+                        </Typography>
                       </TableCell>
                       <TableCell align="center">
                         <ActionCell />

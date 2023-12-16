@@ -19,6 +19,6 @@ export default function useFetch(url) {
       .finally(() => {
         setLoading(false);
       });
-  }, [url]);
+  }, []);
   return { data, loading, error };
 }
