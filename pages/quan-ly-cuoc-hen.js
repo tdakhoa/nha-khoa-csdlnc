@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import Head from "next/head";
 import QuanLyCuocHen from "../src/modules/QuanLyCuocHen";
 
 export default function HomePage() {
+    const [appointment,setAppointment] = useState([])
     return (
         <div>
             <Head>
