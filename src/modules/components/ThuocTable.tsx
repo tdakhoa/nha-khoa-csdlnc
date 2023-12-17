@@ -204,8 +204,35 @@ export default function EnhancedTable() {
     setOpen(false);
   };
 
-  const handleOpen = () => {
+  const handleOpen = (drug: any) => {
     setOpen(true);
+    let temp: any = fetchData.map((e: any, i) => {
+      return { ...e, value: Object.values(drug)[i] };
+    });
+    setData(temp);
+  };
+
+  const deleteDrug = async (id: string) => {
+    console.log(id);
+    axios
+      .post(`http://localhost:5000/XoaThuoc/${id}`)
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+      .finally(() => {});
+    axios
+      .get(`http://localhost:5000/XemThuoc`)
+      .then((res) => {
+        console.log(res);
+        setDrug(Array.isArray(res.data) ? res.data : []);
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+      .finally(() => {});
   };
 
   const handleChange = (e: any, i: any) => {
@@ -368,7 +395,10 @@ export default function EnhancedTable() {
                         <Typography size="p">{row.DonViTinh}</Typography>
                       </TableCell>
                       <TableCell align="center">
-                        <ActionCell onClick={handleOpen} />
+                        <ActionCell
+                          edit={() => handleOpen(row)}
+                          delete={() => deleteDrug(row.MaThuoc)}
+                        />
                       </TableCell>
                     </TableRow>
                   );
@@ -424,14 +454,14 @@ export default function EnhancedTable() {
   );
 }
 
-const ActionCell = ({ onClick }: any) => {
+const ActionCell = (props: any) => {
   return (
     <Box sx={StyledActionCell}>
       <IconButton>
-        <CreateOutlined onClick={onClick} />
+        <CreateOutlined onClick={props.edit} />
       </IconButton>
       <IconButton>
-        <DeleteOutlined />
+        <DeleteOutlined onClick={props.delete} />
       </IconButton>
     </Box>
   );
