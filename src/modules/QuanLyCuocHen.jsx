@@ -1,5 +1,6 @@
 import React from "react";
 import { useState } from "react";
+import moment from "moment";
 import Link from "next/link";
 import {
   Box,
@@ -11,6 +12,7 @@ import {
   DialogContent,
   DialogTitle,
   Grid,
+  FormControl,
 } from "@mui/material";
 import { CreateOutlined } from "@mui/icons-material";
 
@@ -22,10 +24,12 @@ import { DatePicker } from "@mui/x-date-pickers";
 
 const QuanLyCuocHen = () => {
   const [value, setValue] = useState(0);
-  const [date, setDate] = useState(null);
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
   const [open, setOpen] = useState(false);
   const [data, setData] = useState(fetchData);
   const [render, setRender] = useState(false);
+  const [name, setName] = useState("");
 
   const handleClose = () => {
     setOpen(false);
@@ -60,11 +64,48 @@ const QuanLyCuocHen = () => {
             >
               Quản lý cuộc hẹn ngày:
             </Typography>
-            <DatePicker
-              inputFormat="DD-MM-YYYY"
-              value={date}
-              onChange={(date) => setDate(date)}
-            />
+            <div
+              style={{
+                display: "flex",
+                alignItems: "end",
+                gap: "1rem",
+                width: "45vw",
+              }}
+            >
+              <Typography
+                size={{ lg: "p", md: "p" }}
+                style={{ alignSelf: "center" }}
+                weight="extraBold"
+                color="secondary"
+                format={{ lg: "left", md: "center" }}
+              >
+                Từ
+              </Typography>
+              <DatePicker
+                inputFormat="DD-MM-YYYY"
+                value={startDate}
+                onChange={(date) => setStartDate(date)}
+              />
+              <Typography
+                style={{ alignSelf: "center" }}
+                size={{ lg: "p", md: "p" }}
+                weight="extraBold"
+                color="secondary"
+                format={{ lg: "left", md: "center" }}
+              >
+                Đến
+              </Typography>
+              <DatePicker
+                inputFormat="DD-MM-YYYY"
+                value={endDate}
+                onChange={(date) => setEndDate(date)}
+              />
+              <TextField
+                label={"Tên Nha Sĩ"}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </div>
           </Box>
           <Box sx={{ display: "flex" }}>
             <Button
@@ -92,9 +133,13 @@ const QuanLyCuocHen = () => {
             </Tabs>
           </Box>
 
-          {value == 0 ? <QLCHTable /> : <YCHTable />}
+          {value == 0 ? (
+            <QLCHTable startDate={startDate} endDate={endDate} name={name} />
+          ) : (
+            <YCHTable />
+          )}
           <Dialog open={open} onClose={handleClose}>
-            <DialogTitle>Thêm hồ sơ</DialogTitle>
+            <DialogTitle>Thêm lịch hẹn</DialogTitle>
             <DialogContent>
               <InputContainer container spacing={3}>
                 {data.map((item, i) => (
@@ -149,12 +194,15 @@ const HeaderBox = styled(Box)(({ theme }) => ({
 }));
 
 const fetchData = [
-  { label: "ID khách hàng", value: "" },
-  { label: "Họ tên", value: "" },
+  { label: "Email BN", value: "" },
+  { label: "Dia Chi BN", value: "" },
   { label: "Giới tính", value: "" },
-  { label: "Ngày sinh", value: "" },
-  { label: "Số điện thoại", value: "" },
-  { label: "Mật khẩu", value: "" },
+  { label: "Ho Ten BN", value: "" },
+  { label: "Ngay sinh", value: "" },
+  { label: "Ngay", value: "" },
+  { label: "Gio", value: "" },
+  { label: "Kham Chinh", value: "" },
+  { label: "Tro kham", value: "" },
 ];
 
 const InputContainer = styled(Grid)(({ theme }) => ({

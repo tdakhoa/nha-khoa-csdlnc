@@ -27,8 +27,8 @@ import {
   FilterList,
   VisibilityOutlined,
 } from "@mui/icons-material";
-import useFetch from "./../../hooks/useFetch";
 import { Typography } from "../../components";
+import axios from "axios";
 
 const createData = (
   title: string,
@@ -190,15 +190,29 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
   );
 };
 
-export default function EnhancedTable() {
+export default function EnhancedTable(props: any) {
   const [order, setOrder] = React.useState<Order>("asc");
   const [orderBy, setOrderBy] = React.useState<keyof Data>("category");
   const [selected, setSelected] = React.useState<readonly string[]>([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [allowAnimation, setAllowAnimation] = React.useState(false);
-  const schedule =
-    useFetch("http://localhost:5000/LocCuocHenTrongNgay").data || [];
+
+  let [schedure, setSchedure] = React.useState<Array<any>>([]);
+  React.useEffect(() => {
+    axios
+      .get(
+        `http://localhost:5000/LichHenDenNgay?start=${props.startDate}&end=${props.endDate}&name=${props.name}`
+      )
+      .then((res) => {
+        console.log(res);
+        setSchedure(Array.isArray(res.data) ? res.data : []);
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+      .finally(() => {});
+  }, [props.endDate, props.startDate, props.name]);
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
     property: keyof Data
@@ -210,7 +224,7 @@ export default function EnhancedTable() {
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      const newSelected = schedule.map((n: any) => n?.MaLichHen);
+      const newSelected = schedure.map((n: any) => n?.MaLichHen);
       setAllowAnimation(true);
       setSelected(newSelected);
       return;
@@ -299,10 +313,10 @@ export default function EnhancedTable() {
               orderBy={orderBy}
               onSelectAllClick={handleSelectAllClick}
               onRequestSort={handleRequestSort}
-              rowCount={schedule.length}
+              rowCount={schedure.length}
             />
             <TableBody>
-              {stableSort(schedule, getComparator(order, orderBy))
+              {stableSort(schedure, getComparator(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row: any, index) => {
                   const isItemSelected = isSelected(row.MaLichHen);
@@ -401,7 +415,7 @@ export default function EnhancedTable() {
           }}
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={rows.length}
+          count={schedure.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}
@@ -427,49 +441,6 @@ const ActionCell = () => {
     </Box>
   );
 };
-
-const rows = [
-  createData(
-    "Phan Văn Thức",
-    "Lê Văn Sĩ",
-    "Hồ Ngọc Đức",
-    "P001",
-    "14:00",
-    "Cuộc hẹn mới"
-  ),
-  createData(
-    "Trần Hoàng Sinh",
-    "Trần Hoàng Ý",
-    "Lê Văn Sĩ",
-    "P002",
-    "15:00",
-    "Tái khám"
-  ),
-  createData(
-    "Nguyễn Tấn Hùng",
-    "Lê Văn Sĩ",
-    "Trần Hoàng Ý",
-    "P003",
-    "17:30",
-    "Cuộc hẹn mới"
-  ),
-  createData(
-    "Trần Nhân Phước",
-    "Trần Hoàng Ý",
-    "Hồ Ngọc Đức",
-    "P004",
-    "12:00",
-    "Tái khám"
-  ),
-  createData(
-    "Lê Thiên Anh",
-    "Lê Văn Sĩ",
-    "Trần Hoàng Ý",
-    "P005",
-    "9:30",
-    "Tái khám"
-  ),
-];
 
 const headCells: readonly HeadCell[] = [
   {
