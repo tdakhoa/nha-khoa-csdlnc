@@ -17,13 +17,19 @@ import {
     DialogActions
 } from "@mui/material";
 import { CreateOutlined, DeleteOutlined } from "@mui/icons-material";
+import axios from "axios";
 
 import { Button, TextField, Typography } from "../../components";
 
 function EnhancedTableHead() {
     return (
         <TableHead>
-            <TableRow sx={{ backgroundColor: "var(--palette-02)", color: "white", whiteSpace: "nowrap" }}>
+            <TableRow
+                sx={{
+                    backgroundColor: "var(--palette-02)",
+                    color: "white",
+                    whiteSpace: "nowrap"
+                }}>
                 {headCells.map((headCell) => (
                     <TableCell key={headCell.id} align="center">
                         <Typography weight="bold" color="white">
@@ -47,26 +53,67 @@ export default function EnhancedTable() {
     const [open, setOpen] = React.useState(false);
     const [data, setData] = React.useState(fetchData);
     const [render, setRender] = React.useState(false);
+    const [drug, setDrug] = React.useState < Array < any >> [];
+
+    React.useEffect(() => {
+        axios
+            .get(`http://localhost:5000/XemThuoc`)
+            .then((res) => {
+                console.log(res);
+                setDrug(Array.isArray(res.data) ? res.data : []);
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+            .finally(() => {});
+    }, []);
 
     const handleClose = () => {
         setOpen(false);
     };
 
-    const handleOpen = () => {
+    const handleOpen = (drug) => {
         setOpen(true);
+        let temp = fetchData.map((e, i) => {
+            return { ...e, value: Object.values(drug)[i] };
+        });
+        setData(temp);
     };
 
-    const handleChange = (e: any, i: any) => {
+    const deleteDrug = async (id) => {
+        console.log(id);
+        axios
+            .post(`http://localhost:5000/XoaThuoc/${id}`)
+            .then((res) => {
+                console.log(res);
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+            .finally(() => {});
+        axios
+            .get(`http://localhost:5000/XemThuoc`)
+            .then((res) => {
+                console.log(res);
+                setDrug(Array.isArray(res.data) ? res.data : []);
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+            .finally(() => {});
+    };
+
+    const handleChange = (e, i) => {
         fetchData[i].value = e.currentTarget.value;
         setData(fetchData);
         setRender(!render);
     };
 
-    const handleChangePage = (event: unknown, newPage: number) => {
+    const handleChangePage = (event, newPage) => {
         setPage(newPage);
     };
 
-    const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChangeRowsPerPage = (event) => {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
     };
@@ -83,40 +130,53 @@ export default function EnhancedTable() {
                     <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle" size="medium">
                         <EnhancedTableHead />
                         <TableBody>
-                            {/* {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
+                            {drug.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
                                 return (
-                                    <TableRow sx={{ whiteSpace: "nowrap" }} key={row.title}>
+                                    <TableRow sx={{ whiteSpace: "nowrap" }} key={row.MaThuoc}>
                                         <TableCell align="center">
-                                            <Typography size="p">{row.title}</Typography>
+                                            <Typography size="p">{row.MaThuoc}</Typography>
                                         </TableCell>
                                         <TableCell align="center">
-                                            <Typography size="p">{row.category}</Typography>
+                                            <Box
+                                                sx={{
+                                                    display: "flex",
+                                                    justifyContent: "center",
+                                                    alignItems: "end"
+                                                }}>
+                                                <Typography
+                                                    sx={{
+                                                        overflow: "hidden",
+                                                        textOverflow: "ellipsis",
+                                                        display: "-webkit-box",
+                                                        WebkitLineClamp: "2",
+                                                        WebkitBoxOrient: "vertical",
+                                                        whiteSpace: "nowrap",
+                                                        maxWidth: "25rem"
+                                                    }}
+                                                    size="p">
+                                                    {row.TenThuoc}
+                                                </Typography>
+                                            </Box>
                                         </TableCell>
                                         <TableCell align="center">
-                                            <Typography size="p">{row.gender}</Typography>
+                                            <Typography size="p">{row.DonGia}</Typography>
                                         </TableCell>
                                         <TableCell align="center">
-                                            <Typography size="p">{row.writer}</Typography>
+                                            <Typography size="p">{row.DonViTinh}</Typography>
                                         </TableCell>
                                         <TableCell align="center">
-                                            <Typography size="p">{row.date}</Typography>
-                                        </TableCell>
-                                        <TableCell align="center">
-                                            <Typography size="p">{row.password}</Typography>
-                                        </TableCell>
-                                        <TableCell align="center">
-                                            <Typography size="p">{row.status}</Typography>
-                                        </TableCell>
-                                        <TableCell align="center">
-                                            <ActionCell onClick={handleOpen} />
+                                            <ActionCell
+                                                edit={() => handleOpen(row)}
+                                                delete={() => deleteDrug(row.MaThuoc)}
+                                            />
                                         </TableCell>
                                     </TableRow>
                                 );
-                            })} */}
+                            })}
                         </TableBody>
                     </Table>
                 </TableContainer>
-                {/* <TablePagination
+                <TablePagination
                     sx={{
                         "&::-webkit-scrollbar": {
                             height: "0.3rem"
@@ -124,24 +184,20 @@ export default function EnhancedTable() {
                     }}
                     rowsPerPageOptions={[5, 10, 25]}
                     component="div"
-                    count={rows.length}
+                    count={drug.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     onPageChange={handleChangePage}
                     onRowsPerPageChange={handleChangeRowsPerPage}
-                /> */}
+                />
             </Box>
 
             <Dialog open={open} onClose={handleClose}>
-                <DialogTitle>
-                    <Typography weight="bold" size="large">
-                        Cập nhật kế hoạch điều trị
-                    </Typography>
-                </DialogTitle>
+                <DialogTitle>Cập nhật thuốc</DialogTitle>
                 <DialogContent>
                     <InputContainer container spacing={3}>
                         {data.map((item, i) => (
-                            <Grid item xs={12} sm={i == 6 ? 12 : 6} key={i}>
+                            <Grid item xs={12} sm={6} key={i}>
                                 <TextField label={item.label} value={item.value} onChange={(e) => handleChange(e, i)} />
                             </Grid>
                         ))}
@@ -160,80 +216,45 @@ export default function EnhancedTable() {
     );
 }
 
-const ActionCell = ({ onClick }: any) => {
+const ActionCell = (props) => {
     return (
         <Box sx={StyledActionCell}>
             <IconButton>
-                <CreateOutlined onClick={onClick} />
+                <CreateOutlined onClick={props.edit} />
             </IconButton>
             <IconButton>
-                <DeleteOutlined />
+                <DeleteOutlined onClick={props.delete} />
             </IconButton>
         </Box>
     );
 };
 
-const headCells: readonly HeadCell[] = [
+const headCells = [
     {
-        id: "title",
+        id: "id",
         numeric: false,
         disablePadding: true,
-        label: "Mã điều trị"
+        label: "ID thuốc"
     },
     {
-        id: "category",
+        id: "name",
         numeric: true,
         disablePadding: false,
-        label: "Mô tả"
+        label: "Tên thuốc"
     },
     {
-        id: "gender",
+        id: "price",
         numeric: true,
         disablePadding: false,
-        label: "Ngày điều trị"
+        label: "Đơn giá"
     },
     {
-        id: "writer",
+        id: "amount",
         numeric: true,
         disablePadding: false,
-        label: "Bác sĩ thực hiện"
-    },
-    {
-        id: "date",
-        numeric: true,
-        disablePadding: false,
-        label: "Trợ khám"
-    },
-    {
-        id: "password",
-        numeric: true,
-        disablePadding: false,
-        label: "Ghi chú"
-    },
-    {
-        id: "status",
-        numeric: true,
-        disablePadding: false,
-        label: "Trạng thái"
+        label: "Đơn vị tính"
     }
 ];
-
-interface Data {
-    category: string;
-    date: string;
-    gender: string;
-    writer: string;
-    title: string;
-    password: string;
-    status: string;
-}
-
-interface HeadCell {
-    disablePadding: boolean;
-    id: keyof Data;
-    label: string;
-    numeric: boolean;
-}
 
 const StyledActionCell = {
     display: "flex"
@@ -258,11 +279,8 @@ const InputContainer = styled(Grid)(({ theme }) => ({
 }));
 
 const fetchData = [
-    { label: "Mã điều trị", value: "" },
-    { label: "Mô tả", value: "" },
-    { label: "Ngày điều trị", value: "" },
-    { label: "Bác sĩ thực hiện", value: "" },
-    { label: "Trợ khám", value: "" },
-    { label: "Trạng thái", value: "" },
-    { label: "Ghi chú", value: "" }
+    { label: "ID thuốc", value: "" },
+    { label: "Tên thuốc", value: "" },
+    { label: "Đơn giá", value: "" },
+    { label: "Đơn vị tính", value: "" }
 ];

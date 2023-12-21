@@ -9,17 +9,13 @@ import {
     TableHead,
     TablePagination,
     TableRow,
-    IconButton,
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    Grid,
-    DialogActions
+    IconButton
 } from "@mui/material";
-import { CreateOutlined, DeleteOutlined } from "@mui/icons-material";
+import { CloseOutlined, Done } from "@mui/icons-material";
 import axios from "axios";
+import moment from "moment";
 
-import { Button, TextField, Typography } from "../../components";
+import { Typography } from "../../components";
 
 function EnhancedTableHead() {
     return (
@@ -50,17 +46,14 @@ function EnhancedTableHead() {
 export default function EnhancedTable() {
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
-    const [open, setOpen] = React.useState(false);
-    const [data, setData] = React.useState(fetchData);
-    const [render, setRender] = React.useState(false);
-    const [drug, setDrug] = React.useState<Array<any>>([]);
+    let [schedure, setSchedure] = React.useState([]);
 
     React.useEffect(() => {
         axios
-            .get(`http://localhost:5000/XemThuoc`)
+            .get(`http://localhost:5000/GET_SCHEDURE`)
             .then((res) => {
                 console.log(res);
-                setDrug(Array.isArray(res.data) ? res.data : []);
+                setSchedure(Array.isArray(res.data) ? res.data : []);
             })
             .catch((err) => {
                 console.log(err);
@@ -68,52 +61,11 @@ export default function EnhancedTable() {
             .finally(() => {});
     }, []);
 
-    const handleClose = () => {
-        setOpen(false);
-    };
-
-    const handleOpen = (drug: any) => {
-        setOpen(true);
-        let temp: any = fetchData.map((e: any, i) => {
-            return { ...e, value: Object.values(drug)[i] };
-        });
-        setData(temp);
-    };
-
-    const deleteDrug = async (id: string) => {
-        console.log(id);
-        axios
-            .post(`http://localhost:5000/XoaThuoc/${id}`)
-            .then((res) => {
-                console.log(res);
-            })
-            .catch((err) => {
-                console.log(err);
-            })
-            .finally(() => {});
-        axios
-            .get(`http://localhost:5000/XemThuoc`)
-            .then((res) => {
-                console.log(res);
-                setDrug(Array.isArray(res.data) ? res.data : []);
-            })
-            .catch((err) => {
-                console.log(err);
-            })
-            .finally(() => {});
-    };
-
-    const handleChange = (e: any, i: any) => {
-        fetchData[i].value = e.currentTarget.value;
-        setData(fetchData);
-        setRender(!render);
-    };
-
-    const handleChangePage = (event: unknown, newPage: number) => {
+    const handleChangePage = (event, newPage) => {
         setPage(newPage);
     };
 
-    const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChangeRowsPerPage = (event) => {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
     };
@@ -130,12 +82,9 @@ export default function EnhancedTable() {
                     <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle" size="medium">
                         <EnhancedTableHead />
                         <TableBody>
-                            {drug.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row: any, index) => {
+                            {schedure.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
                                 return (
-                                    <TableRow sx={{ whiteSpace: "nowrap" }} key={row.MaThuoc}>
-                                        <TableCell align="center">
-                                            <Typography size="p">{row.MaThuoc}</Typography>
-                                        </TableCell>
+                                    <TableRow sx={{ whiteSpace: "nowrap" }} hover tabIndex={-1} key={row?.MaLichHen}>
                                         <TableCell align="center">
                                             <Box
                                                 sx={{
@@ -151,24 +100,55 @@ export default function EnhancedTable() {
                                                         WebkitLineClamp: "2",
                                                         WebkitBoxOrient: "vertical",
                                                         whiteSpace: "nowrap",
-                                                        maxWidth: "25rem"
+                                                        maxWidth: "14rem"
                                                     }}
                                                     size="p">
-                                                    {row.TenThuoc}
+                                                    {row.TenBN}
                                                 </Typography>
                                             </Box>
                                         </TableCell>
                                         <TableCell align="center">
-                                            <Typography size="p">{row.DonGia}</Typography>
+                                            <Box
+                                                sx={{
+                                                    display: "flex",
+                                                    justifyContent: "center",
+                                                    alignItems: "end"
+                                                }}>
+                                                <Typography
+                                                    size="p"
+                                                    sx={{
+                                                        overflow: "hidden",
+                                                        textOverflow: "ellipsis",
+                                                        display: "-webkit-box",
+                                                        WebkitLineClamp: "2",
+                                                        WebkitBoxOrient: "vertical",
+                                                        whiteSpace: "nowrap",
+                                                        maxWidth: "6rem"
+                                                    }}>
+                                                    {moment(row.Ngay).format("DD-MM-YYYY")}
+                                                </Typography>
+                                            </Box>
                                         </TableCell>
                                         <TableCell align="center">
-                                            <Typography size="p">{row.DonViTinh}</Typography>
+                                            <Typography size="p">{row.TinhTrang}</Typography>
                                         </TableCell>
                                         <TableCell align="center">
-                                            <ActionCell
-                                                edit={() => handleOpen(row)}
-                                                delete={() => deleteDrug(row.MaThuoc)}
-                                            />
+                                            <Typography
+                                                sx={{
+                                                    overflow: "hidden",
+                                                    textOverflow: "ellipsis",
+                                                    display: "-webkit-box",
+                                                    WebkitLineClamp: "2",
+                                                    WebkitBoxOrient: "vertical",
+                                                    whiteSpace: "nowrap",
+                                                    maxWidth: "10rem"
+                                                }}
+                                                size="p">
+                                                {moment(row.Gio).format("DD-MM-YYYY")}
+                                            </Typography>
+                                        </TableCell>
+                                        <TableCell align="center">
+                                            <ActionCell />
                                         </TableCell>
                                     </TableRow>
                                 );
@@ -184,91 +164,57 @@ export default function EnhancedTable() {
                     }}
                     rowsPerPageOptions={[5, 10, 25]}
                     component="div"
-                    count={drug.length}
+                    count={schedure.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     onPageChange={handleChangePage}
                     onRowsPerPageChange={handleChangeRowsPerPage}
                 />
             </Box>
-
-            <Dialog open={open} onClose={handleClose}>
-                <DialogTitle>Cập nhật thuốc</DialogTitle>
-                <DialogContent>
-                    <InputContainer container spacing={3}>
-                        {data.map((item, i) => (
-                            <Grid item xs={12} sm={6} key={i}>
-                                <TextField label={item.label} value={item.value} onChange={(e) => handleChange(e, i)} />
-                            </Grid>
-                        ))}
-                    </InputContainer>
-                </DialogContent>
-                <DialogActions>
-                    <Button bgcolor="gray" onClick={handleClose} sx={{ width: "7rem" }}>
-                        Thoát
-                    </Button>
-                    <Button bgcolor="secondary" onClick={handleClose} sx={{ width: "7rem" }}>
-                        Cập nhật
-                    </Button>
-                </DialogActions>
-            </Dialog>
         </EnhancedTableBox>
     );
 }
 
-const ActionCell = (props: any) => {
+const ActionCell = () => {
     return (
         <Box sx={StyledActionCell}>
             <IconButton>
-                <CreateOutlined onClick={props.edit} />
+                <Done />
             </IconButton>
             <IconButton>
-                <DeleteOutlined onClick={props.delete} />
+                <CloseOutlined />
             </IconButton>
         </Box>
     );
 };
 
-const headCells: readonly HeadCell[] = [
+const headCells = [
     {
-        id: "id",
+        id: "title",
         numeric: false,
         disablePadding: true,
-        label: "ID thuốc"
+        label: "Tên bệnh nhân"
     },
     {
-        id: "name",
+        id: "category",
         numeric: true,
         disablePadding: false,
-        label: "Tên thuốc"
+        label: "Ngày hẹn"
     },
     {
-        id: "price",
+        id: "writer",
         numeric: true,
         disablePadding: false,
-        label: "Đơn giá"
+        label: "Tình trạng"
     },
+
     {
-        id: "amount",
+        id: "date",
         numeric: true,
         disablePadding: false,
-        label: "Đơn vị tính"
+        label: "Thời gian yêu cầu"
     }
 ];
-
-interface Data {
-    id: string;
-    name: string;
-    price: string;
-    amount: string;
-}
-
-interface HeadCell {
-    disablePadding: boolean;
-    id: keyof Data;
-    label: string;
-    numeric: boolean;
-}
 
 const StyledActionCell = {
     display: "flex"
@@ -282,19 +228,3 @@ const EnhancedTableBox = styled(Box)(({ theme }) => ({
     overflow: "hidden",
     transition: "all 0.3s ease-in-out"
 }));
-
-const InputContainer = styled(Grid)(({ theme }) => ({
-    width: "100%",
-    marginLeft: "0",
-    padding: "12px 16px",
-    [theme.breakpoints.down("sm")]: {
-        paddingLeft: 0
-    }
-}));
-
-const fetchData = [
-    { label: "ID thuốc", value: "" },
-    { label: "Tên thuốc", value: "" },
-    { label: "Đơn giá", value: "" },
-    { label: "Đơn vị tính", value: "" }
-];

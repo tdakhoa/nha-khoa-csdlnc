@@ -1,6 +1,6 @@
 import React from "react";
 import Head from "next/head";
-import ThongTinChiTiet from "../../src/modules/ThongTinChiTiet";
+import ThongTinChiTiet from "../../../src/modules/ThongTinChiTiet";
 
 export default function HomePage() {
     return (

@@ -19,6 +19,8 @@ import {
 import { CreateOutlined, DeleteOutlined } from "@mui/icons-material";
 
 import { Button, TextField, Typography } from "../../components";
+import axios from "axios";
+import { useRouter } from "next/router";
 
 function EnhancedTableHead() {
     return (
@@ -48,6 +50,21 @@ export default function EnhancedTable() {
     const [open, setOpen] = React.useState(false);
     const [data, setData] = React.useState(fetchData);
     const [render, setRender] = React.useState(false);
+    const [payment, setPayment] = React.useState([]);
+    const router = useRouter();
+
+    React.useEffect(() => {
+        axios
+            .get(`http://localhost:5000/XemDanhSachThanhToanCuaBenhNhan/${router.query.slug}`)
+            .then((res) => {
+                console.log(res);
+                setPayment(Array.isArray(res.data) ? res.data : []);
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+            .finally(() => {});
+    }, []);
 
     const handleClose = () => {
         setOpen(false);
@@ -57,17 +74,17 @@ export default function EnhancedTable() {
         setOpen(true);
     };
 
-    const handleChange = (e: any, i: any) => {
+    const handleChange = (e, i) => {
         fetchData[i].value = e.currentTarget.value;
         setData(fetchData);
         setRender(!render);
     };
 
-    const handleChangePage = (event: unknown, newPage: number) => {
+    const handleChangePage = (event, newPage) => {
         setPage(newPage);
     };
 
-    const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChangeRowsPerPage = (event) => {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
     };
@@ -84,7 +101,7 @@ export default function EnhancedTable() {
                     <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle" size="medium">
                         <EnhancedTableHead />
                         <TableBody>
-                            {/* {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
+                            {payment.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
                                 return (
                                     <TableRow sx={{ whiteSpace: "nowrap" }} key={row.title}>
                                         <TableCell align="center">
@@ -113,7 +130,7 @@ export default function EnhancedTable() {
                                         </TableCell>
                                     </TableRow>
                                 );
-                            })} */}
+                            })}
                         </TableBody>
                     </Table>
                 </TableContainer>
@@ -163,7 +180,7 @@ export default function EnhancedTable() {
     );
 }
 
-const ActionCell = ({ onClick }: any) => {
+const ActionCell = ({ onClick }) => {
     return (
         <Box sx={StyledActionCell}>
             <IconButton>
@@ -176,7 +193,7 @@ const ActionCell = ({ onClick }: any) => {
     );
 };
 
-const headCells: readonly HeadCell[] = [
+const headCells = [
     {
         id: "title",
         numeric: false,
@@ -220,23 +237,6 @@ const headCells: readonly HeadCell[] = [
         label: "Ghi chú"
     }
 ];
-
-interface Data {
-    category: string;
-    date: string;
-    gender: string;
-    writer: string;
-    title: string;
-    password: string;
-    status: string;
-}
-
-interface HeadCell {
-    disablePadding: boolean;
-    id: keyof Data;
-    label: string;
-    numeric: boolean;
-}
 
 const StyledActionCell = {
     display: "flex"

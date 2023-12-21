@@ -35,6 +35,6 @@
         "src/modules/components/StaffTable.tsx",
         "src/modules/components/Popup.jsx",
         "src/modules/components/Drawer.jsx"
-    ],
+, "src/modules/components/BenhNhanTable.jsx", "src/modules/components/DonThuocTable.jsx", "src/modules/components/DanhSachThanhToanTable.jsx", "src/modules/components/KeHoachDieuTriTable.jsx", "src/modules/components/YCHTable.jsx", "src/modules/components/ThuocTable.jsx", "src/modules/components/QLCHTable.jsx", "src/modules/components/NhaSiTable.jsx", "src/modules/components/NhanVienTable.jsx"    ],
     "exclude": ["node_modules"]
 }

@@ -10,11 +10,16 @@ import {
     DialogTitle,
     DialogContent,
     Grid,
-    DialogActions
+    DialogActions,
+    TableContainer,
+    Table,
+    TableBody
 } from "@mui/material";
 import { CreateOutlined, DeleteOutlined } from "@mui/icons-material";
 
 import { Button, TextField, Typography } from "../../components";
+import { useRouter } from "next/router";
+import axios from "axios";
 
 function EnhancedTableHead() {
     return (
@@ -43,6 +48,21 @@ export default function EnhancedTable() {
     const [open, setOpen] = React.useState(false);
     const [data, setData] = React.useState(fetchData);
     const [render, setRender] = React.useState(false);
+    const [medicines, setMedicines] = React.useState([]);
+    const router = useRouter();
+
+    React.useEffect(() => {
+        axios
+            .get(`http://localhost:5000/XemDonThuoc`)
+            .then((res) => {
+                console.log(res);
+                setMedicines(Array.isArray(res.data) ? res.data : []);
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+            .finally(() => {});
+    }, []);
 
     const handleClose = () => {
         setOpen(false);
@@ -52,24 +72,24 @@ export default function EnhancedTable() {
         setOpen(true);
     };
 
-    const handleChange = (e: any, i: any) => {
+    const handleChange = (e, i) => {
         fetchData[i].value = e.currentTarget.value;
         setData(fetchData);
         setRender(!render);
     };
 
-    const handleChangePage = (event: unknown, newPage: number) => {
+    const handleChangePage = (event, newPage) => {
         setPage(newPage);
     };
 
-    const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChangeRowsPerPage = (event) => {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
     };
 
     return (
         <EnhancedTableBox>
-            {/* <Box>
+            <Box>
                 <TableContainer
                     sx={{
                         "&::-webkit-scrollbar": {
@@ -121,7 +141,7 @@ export default function EnhancedTable() {
                     onPageChange={handleChangePage}
                     onRowsPerPageChange={handleChangeRowsPerPage}
                 />
-            </Box> */}
+            </Box>
 
             <Dialog open={open} onClose={handleClose}>
                 <DialogTitle>
@@ -153,7 +173,7 @@ export default function EnhancedTable() {
     );
 }
 
-const ActionCell = ({ onClick }: any) => {
+const ActionCell = ({ onClick }) => {
     return (
         <Box sx={StyledActionCell}>
             <IconButton>
@@ -166,7 +186,7 @@ const ActionCell = ({ onClick }: any) => {
     );
 };
 
-const headCells: readonly HeadCell[] = [
+const headCells = [
     {
         id: "title",
         numeric: false,
@@ -198,21 +218,6 @@ const headCells: readonly HeadCell[] = [
         label: "Giá tiền"
     }
 ];
-
-interface Data {
-    category: string;
-    date: string;
-    gender: string;
-    writer: string;
-    title: string;
-}
-
-interface HeadCell {
-    disablePadding: boolean;
-    id: keyof Data;
-    label: string;
-    numeric: boolean;
-}
 
 const StyledActionCell = {
     display: "flex"

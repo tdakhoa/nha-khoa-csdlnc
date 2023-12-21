@@ -46,14 +46,14 @@ function EnhancedTableHead() {
 export default function EnhancedTable() {
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
-    const [doctor, setDoctor] = React.useState<Array<any>>([]);
+    const [employee, setEmployee] = React.useState([]);
 
     React.useEffect(() => {
         axios
-            .get(`http://localhost:5000/ALL_THE_DOCTOR`)
+            .get(`http://localhost:5000/ALL_THE_EMPLOYEE`)
             .then((res) => {
                 console.log(res);
-                setDoctor(Array.isArray(res.data) ? res.data : []);
+                setEmployee(Array.isArray(res.data) ? res.data : []);
             })
             .catch((err) => {
                 console.log(err);
@@ -61,11 +61,11 @@ export default function EnhancedTable() {
             .finally(() => {});
     }, []);
 
-    const handleChangePage = (event: unknown, newPage: number) => {
+    const handleChangePage = (event, newPage) => {
         setPage(newPage);
     };
 
-    const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChangeRowsPerPage = (event) => {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
     };
@@ -82,53 +82,51 @@ export default function EnhancedTable() {
                     <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle" size="medium">
                         <EnhancedTableHead />
                         <TableBody>
-                            {doctor
-                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                .map((row: any, index) => {
-                                    return (
-                                        <TableRow sx={{ whiteSpace: "nowrap" }} key={row.title}>
-                                            <TableCell align="center">
-                                                <Typography size="p">{row.MaND}</Typography>
-                                            </TableCell>
-                                            <TableCell align="center">
-                                                <Box
+                            {employee.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
+                                return (
+                                    <TableRow sx={{ whiteSpace: "nowrap" }} key={row.MaND}>
+                                        <TableCell align="center">
+                                            <Typography size="p">{row.MaND}</Typography>
+                                        </TableCell>
+                                        <TableCell align="center">
+                                            <Box
+                                                sx={{
+                                                    display: "flex",
+                                                    justifyContent: "center",
+                                                    alignItems: "end"
+                                                }}>
+                                                <Typography
+                                                    size="p"
                                                     sx={{
-                                                        display: "flex",
-                                                        justifyContent: "center",
-                                                        alignItems: "end"
+                                                        overflow: "hidden",
+                                                        textOverflow: "ellipsis",
+                                                        display: "-webkit-box",
+                                                        WebkitLineClamp: "2",
+                                                        WebkitBoxOrient: "vertical",
+                                                        whiteSpace: "nowrap",
+                                                        maxWidth: "14rem"
                                                     }}>
-                                                    <Typography
-                                                        size="p"
-                                                        sx={{
-                                                            overflow: "hidden",
-                                                            textOverflow: "ellipsis",
-                                                            display: "-webkit-box",
-                                                            WebkitLineClamp: "2",
-                                                            WebkitBoxOrient: "vertical",
-                                                            whiteSpace: "nowrap",
-                                                            maxWidth: "14rem"
-                                                        }}>
-                                                        {row.TenND}
-                                                    </Typography>
-                                                </Box>
-                                            </TableCell>
-                                            <TableCell align="center">
-                                                <Typography size="p">
-                                                    {moment(row.NgaySinhND).format("DD-MM-YYYY")}
+                                                    {row.TenND}
                                                 </Typography>
-                                            </TableCell>
-                                            <TableCell align="center">
-                                                <Typography size="p">{row.GioiTinhND}</Typography>
-                                            </TableCell>
-                                            <TableCell align="center">
-                                                <Typography size="p">{row.PhongKham}</Typography>
-                                            </TableCell>
-                                            <TableCell align="center">
-                                                <ActionCell />
-                                            </TableCell>
-                                        </TableRow>
-                                    );
-                                })}
+                                            </Box>
+                                        </TableCell>
+                                        <TableCell align="center">
+                                            <Typography size="p">
+                                                {moment(row.NgaySinhND).format("DD-MM-YYYY")}
+                                            </Typography>
+                                        </TableCell>
+                                        <TableCell align="center">
+                                            <Typography size="p">{row.GioiTinhND}</Typography>
+                                        </TableCell>
+                                        <TableCell align="center">
+                                            <Typography size="p">{row.PhongKham}</Typography>
+                                        </TableCell>
+                                        <TableCell align="center">
+                                            <ActionCell />
+                                        </TableCell>
+                                    </TableRow>
+                                );
+                            })}
                         </TableBody>
                     </Table>
                 </TableContainer>
@@ -140,7 +138,7 @@ export default function EnhancedTable() {
                     }}
                     rowsPerPageOptions={[5, 10, 25]}
                     component="div"
-                    count={doctor.length}
+                    count={employee.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     onPageChange={handleChangePage}
@@ -167,12 +165,12 @@ const ActionCell = () => {
     );
 };
 
-const headCells: readonly HeadCell[] = [
+const headCells = [
     {
         id: "title",
         numeric: false,
         disablePadding: true,
-        label: "Mã nha sĩ"
+        label: "Mã nhân viên"
     },
     {
         id: "category",
@@ -199,21 +197,6 @@ const headCells: readonly HeadCell[] = [
         label: "Mã phòng khám"
     }
 ];
-
-interface Data {
-    category: string;
-    date: string;
-    writer: string;
-    title: string;
-    password: string;
-}
-
-interface HeadCell {
-    disablePadding: boolean;
-    id: keyof Data;
-    label: string;
-    numeric: boolean;
-}
 
 const StyledActionCell = {
     display: "flex"
