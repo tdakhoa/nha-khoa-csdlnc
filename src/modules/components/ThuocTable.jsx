@@ -53,7 +53,7 @@ export default function EnhancedTable() {
     const [open, setOpen] = React.useState(false);
     const [data, setData] = React.useState(fetchData);
     const [render, setRender] = React.useState(false);
-    const [drug, setDrug] = React.useState < Array < any >> [];
+    const [drug, setDrug] = React.useState([]);
 
     React.useEffect(() => {
         axios

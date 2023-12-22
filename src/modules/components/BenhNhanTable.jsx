@@ -74,61 +74,42 @@ export default function EnhancedTable() {
 
     const handleOpen = (patient) => {
         setOpen(true);
-        let patientData = patient;
-        delete patientData.Tuoi;
-        delete patientData.TongTienPhaiTra;
-        delete patientData.TongTienThanhToan;
-        delete patientData.TongQuan;
         let temp = fetchData.map((e, i) => {
-            return { ...e, value: Object.values(patientData)[i] };
+            return { ...e, value: Object.values(patient)[i] };
         });
         setData(temp);
     };
 
     const deletePatient = async (id) => {
-        console.log(id);
-        axios
-            .post(`http://localhost:5000/SuaTTBenhNhan/${id}`)
-            .then((res) => {
-                console.log(res);
-            })
-            .catch((err) => {
-                console.log(err);
-            })
-            .finally(() => {});
-        axios
-            .get(`http://localhost:5000/XemDsBenhNhan`)
-            .then((res) => {
-                console.log(res);
-                setPatients(Array.isArray(res.data) ? res.data : []);
-            })
-            .catch((err) => {
-                console.log(err);
-            })
-            .finally(() => {});
+        try {
+            await axios.post(`http://localhost:5000/XoaBenhNhan/${id}`);
+            const res = await axios.get(`http://localhost:5000/XemDsBenhNhan`);
+            setPatients(Array.isArray(res.data) ? res.data : []);
+        } catch (err) {
+            console.log(err);
+        }
     };
 
     const updatePatient = async (id) => {
-        console.log(id);
-        axios
-            .post(`http://localhost:5000/SuaTTBenhNhan/${id}`, data)
-            .then((res) => {
-                console.log(res);
-            })
-            .catch((err) => {
-                console.log(err);
-            })
-            .finally(() => {});
-        axios
-            .get(`http://localhost:5000/XemDsBenhNhan`)
-            .then((res) => {
-                console.log(res);
-                setPatients(Array.isArray(res.data) ? res.data : []);
-            })
-            .catch((err) => {
-                console.log(err);
-            })
-            .finally(() => {});
+        let value = {
+            MaBN: data[0].value,
+            HotenBN: data[1].value,
+            NgaySinhBN: data[2].value,
+            GioiTinhBN: data[4].value,
+            SDTBN: data[8].value,
+            EmailBN: data[9].value,
+            DiachiBN: data[10].value
+        };
+
+        try {
+            await axios.post(`http://localhost:5000/SuaTTBenhNhan/${id}`, value);
+            const res = await axios.get(`http://localhost:5000/XemDsBenhNhan`);
+            setPatients(Array.isArray(res.data) ? res.data : []);
+        } catch (err) {
+            console.error("Error updating patient:", err);
+        } finally {
+            setOpen(false);
+        }
     };
 
     const handleClose = () => {
@@ -167,7 +148,19 @@ export default function EnhancedTable() {
                                 return (
                                     <TableRow sx={{ whiteSpace: "nowrap" }} key={row.MaBN}>
                                         <TableCell align="center">
-                                            <Typography size="p">{row.MaBN}</Typography>
+                                            <Typography
+                                                sx={{
+                                                    overflow: "hidden",
+                                                    textOverflow: "ellipsis",
+                                                    display: "-webkit-box",
+                                                    WebkitLineClamp: "2",
+                                                    WebkitBoxOrient: "vertical",
+                                                    whiteSpace: "nowrap",
+                                                    maxWidth: "6rem"
+                                                }}
+                                                size="p">
+                                                {row.MaBN}
+                                            </Typography>
                                         </TableCell>
                                         <TableCell align="center">
                                             <Box
@@ -185,7 +178,7 @@ export default function EnhancedTable() {
                                                         WebkitLineClamp: "2",
                                                         WebkitBoxOrient: "vertical",
                                                         whiteSpace: "nowrap",
-                                                        maxWidth: "12rem"
+                                                        maxWidth: "10rem"
                                                     }}>
                                                     {row.HotenBN}
                                                 </Typography>
@@ -207,9 +200,9 @@ export default function EnhancedTable() {
                                                         WebkitLineClamp: "2",
                                                         WebkitBoxOrient: "vertical",
                                                         whiteSpace: "nowrap",
-                                                        maxWidth: "5rem"
+                                                        maxWidth: "6rem"
                                                     }}>
-                                                    {row.GioiTinhBN}
+                                                    {moment(row.NgaySinhBN).format("DD-MM-YYYY")}
                                                 </Typography>
                                             </Box>
                                         </TableCell>
@@ -223,13 +216,25 @@ export default function EnhancedTable() {
                                                     WebkitLineClamp: "2",
                                                     WebkitBoxOrient: "vertical",
                                                     whiteSpace: "nowrap",
-                                                    maxWidth: "8rem"
+                                                    maxWidth: "6rem"
                                                 }}>
-                                                {moment(row.NgaySinhBN).format("DD-MM-YYYY")}
+                                                {row.GioiTinhBN}
                                             </Typography>
                                         </TableCell>
                                         <TableCell align="center">
-                                            <Typography size="p">{row.SDTBN}</Typography>
+                                            <Typography
+                                                size="p"
+                                                sx={{
+                                                    overflow: "hidden",
+                                                    textOverflow: "ellipsis",
+                                                    display: "-webkit-box",
+                                                    WebkitLineClamp: "2",
+                                                    WebkitBoxOrient: "vertical",
+                                                    whiteSpace: "nowrap",
+                                                    maxWidth: "7rem"
+                                                }}>
+                                                {row.SDTBN}
+                                            </Typography>
                                         </TableCell>
                                         <TableCell align="center">
                                             <Box
@@ -247,7 +252,7 @@ export default function EnhancedTable() {
                                                         WebkitLineClamp: "2",
                                                         WebkitBoxOrient: "vertical",
                                                         whiteSpace: "nowrap",
-                                                        maxWidth: "14rem"
+                                                        maxWidth: "12rem"
                                                     }}>
                                                     {row.EmailBN}
                                                 </Typography>
@@ -269,7 +274,7 @@ export default function EnhancedTable() {
                                                         WebkitLineClamp: "2",
                                                         WebkitBoxOrient: "vertical",
                                                         whiteSpace: "nowrap",
-                                                        maxWidth: "14rem"
+                                                        maxWidth: "12rem"
                                                     }}>
                                                     {row.DiaChiBN}
                                                 </Typography>
@@ -323,10 +328,28 @@ export default function EnhancedTable() {
 
                 <DialogContent>
                     <InputContainer container spacing={3}>
-                        {data.slice(0, 7).map((item, i) => (
-                            <Grid item xs={12} sm={6} key={i}>
-                                <TextField label={item.label} value={item.value} onChange={(e) => handleChange(e, i)} />
-                            </Grid>
+                        {data.map((item, i) => (
+                            <>
+                                {i == 3 || i == 5 || i == 6 || i == 7 ? (
+                                    <></>
+                                ) : i == 2 ? (
+                                    <Grid item xs={12} sm={6} key={i}>
+                                        <TextField
+                                            label={item.label}
+                                            value={moment(item.value).format("DD-MM-YYYY")}
+                                            onChange={(e) => handleChange(e, i)}
+                                        />
+                                    </Grid>
+                                ) : (
+                                    <Grid item xs={12} sm={6} key={i}>
+                                        <TextField
+                                            label={item.label}
+                                            value={item.value}
+                                            onChange={(e) => handleChange(e, i)}
+                                        />
+                                    </Grid>
+                                )}
+                            </>
                         ))}
                     </InputContainer>
                 </DialogContent>
@@ -334,7 +357,7 @@ export default function EnhancedTable() {
                     <Button bgcolor="gray" onClick={handleClose} sx={{ width: "7rem" }}>
                         Thoát
                     </Button>
-                    <Button bgcolor="secondary" onClick={updatePatient} sx={{ width: "7rem" }}>
+                    <Button bgcolor="secondary" onClick={() => updatePatient(data[0].value)} sx={{ width: "7rem" }}>
                         Cập nhật
                     </Button>
                 </DialogActions>
@@ -433,7 +456,11 @@ const fetchData = [
     { label: "Mã bệnh nhân", value: "" },
     { label: "Họ tên", value: "" },
     { label: "Ngày sinh", value: "" },
+    { label: "Tuổi", value: "" },
     { label: "Giới tính", value: "" },
+    { label: "Tổng tiền phải trả", value: "" },
+    { label: "Tổng tiền thanh toán", value: "" },
+    { label: "Tổng quan", value: "" },
     { label: "Số điện thoại", value: "" },
     { label: "Email", value: "" },
     { label: "Địa chỉ", value: "" }

@@ -13,7 +13,8 @@ import {
     DialogActions,
     TableContainer,
     Table,
-    TableBody
+    TableBody,
+    TablePagination
 } from "@mui/material";
 import { CreateOutlined, DeleteOutlined } from "@mui/icons-material";
 
@@ -99,7 +100,7 @@ export default function EnhancedTable() {
                     <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle" size="medium">
                         <EnhancedTableHead />
                         <TableBody>
-                            {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
+                            {medicines.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
                                 return (
                                     <TableRow sx={{ whiteSpace: "nowrap" }} key={row.title}>
                                         <TableCell align="center">
@@ -135,7 +136,7 @@ export default function EnhancedTable() {
                     }}
                     rowsPerPageOptions={[5, 10, 25]}
                     component="div"
-                    count={rows.length}
+                    count={medicines.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     onPageChange={handleChangePage}

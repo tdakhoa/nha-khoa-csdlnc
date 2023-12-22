@@ -15,6 +15,7 @@ import { DeleteOutlined, EditOutlined, VisibilityOutlined } from "@mui/icons-mat
 import axios from "axios";
 
 import { Typography } from "../../components";
+import moment from "moment";
 
 function EnhancedTableHead() {
     return (
@@ -45,7 +46,7 @@ function EnhancedTableHead() {
 export default function EnhancedTable(props) {
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
-    const [schedure, setSchedure] = React.useState < Array < any >> [];
+    const [schedure, setSchedure] = React.useState([]);
 
     React.useEffect(() => {
         axios
@@ -87,19 +88,21 @@ export default function EnhancedTable(props) {
                                 return (
                                     <TableRow sx={{ whiteSpace: "nowrap" }} key={row.MaLichHen}>
                                         <TableCell align="left">
-                                            <Typography
-                                                sx={{
-                                                    overflow: "hidden",
-                                                    textOverflow: "ellipsis",
-                                                    display: "-webkit-box",
-                                                    WebkitLineClamp: "2",
-                                                    WebkitBoxOrient: "vertical",
-                                                    whiteSpace: "nowrap",
-                                                    maxWidth: "10rem"
-                                                }}
-                                                size="p">
-                                                {row.TenBN}
-                                            </Typography>
+                                            <Box sx={{ display: "flex", justifyContent: "center" }}>
+                                                <Typography
+                                                    sx={{
+                                                        overflow: "hidden",
+                                                        textOverflow: "ellipsis",
+                                                        display: "-webkit-box",
+                                                        WebkitLineClamp: "2",
+                                                        WebkitBoxOrient: "vertical",
+                                                        whiteSpace: "nowrap",
+                                                        maxWidth: "14rem"
+                                                    }}
+                                                    size="p">
+                                                    {row.TenBN}
+                                                </Typography>
+                                            </Box>
                                         </TableCell>
                                         <TableCell align="center">
                                             <Typography size="p">{row.KhamChinh}</Typography>
@@ -111,34 +114,38 @@ export default function EnhancedTable(props) {
                                             <Typography size="p">{row.MaPK}</Typography>
                                         </TableCell>
                                         <TableCell align="left">
-                                            <Typography
-                                                size="p"
-                                                sx={{
-                                                    overflow: "hidden",
-                                                    textOverflow: "ellipsis",
-                                                    display: "-webkit-box",
-                                                    WebkitLineClamp: "2",
-                                                    WebkitBoxOrient: "vertical",
-                                                    whiteSpace: "nowrap",
-                                                    maxWidth: "5rem"
-                                                }}>
-                                                {row.Ngay}
-                                            </Typography>
+                                            <Box sx={{ display: "flex", justifyContent: "center" }}>
+                                                <Typography
+                                                    size="p"
+                                                    sx={{
+                                                        overflow: "hidden",
+                                                        textOverflow: "ellipsis",
+                                                        display: "-webkit-box",
+                                                        WebkitLineClamp: "2",
+                                                        WebkitBoxOrient: "vertical",
+                                                        whiteSpace: "nowrap",
+                                                        maxWidth: "8rem"
+                                                    }}>
+                                                    {moment(row.Ngay).format("DD-MM-YYYY")}
+                                                </Typography>
+                                            </Box>
                                         </TableCell>
                                         <TableCell align="center">
-                                            <Typography
-                                                size="p"
-                                                sx={{
-                                                    overflow: "hidden",
-                                                    textOverflow: "ellipsis",
-                                                    display: "-webkit-box",
-                                                    WebkitLineClamp: "2",
-                                                    WebkitBoxOrient: "vertical",
-                                                    whiteSpace: "nowrap",
-                                                    maxWidth: "2rem"
-                                                }}>
-                                                {row.TinhTrang}
-                                            </Typography>
+                                            <Box sx={{ display: "flex", justifyContent: "center" }}>
+                                                <Typography
+                                                    size="p"
+                                                    sx={{
+                                                        overflow: "hidden",
+                                                        textOverflow: "ellipsis",
+                                                        display: "-webkit-box",
+                                                        WebkitLineClamp: "2",
+                                                        WebkitBoxOrient: "vertical",
+                                                        whiteSpace: "nowrap",
+                                                        maxWidth: "14rem"
+                                                    }}>
+                                                    {row.TinhTrang}
+                                                </Typography>
+                                            </Box>
                                         </TableCell>
                                         <TableCell align="center">
                                             <ActionCell />

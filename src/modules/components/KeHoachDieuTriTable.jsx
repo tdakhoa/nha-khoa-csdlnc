@@ -21,6 +21,7 @@ import { CreateOutlined, DeleteOutlined } from "@mui/icons-material";
 import { Button, TextField, Typography } from "../../components";
 import { useRouter } from "next/router";
 import axios from "axios";
+import moment from "moment";
 
 function EnhancedTableHead() {
     return (
@@ -52,18 +53,21 @@ export default function EnhancedTable() {
     const [plans, setPlans] = React.useState([]);
     const router = useRouter();
 
+    console.log(router);
+
     React.useEffect(() => {
-        axios
-            .get(`http://localhost:5000/XemKeHoachDieuTri`)
-            .then((res) => {
-                console.log(res);
-                setPlans(Array.isArray(res.data) ? res.data : []);
-            })
-            .catch((err) => {
-                console.log(err);
-            })
-            .finally(() => {});
-    }, []);
+        if (router.query.slug) {
+            axios
+                .get(`http://localhost:5000/XemKeHoachDieuTriBenhNhan/${router.query.slug}`)
+                .then((res) => {
+                    console.log(res);
+                    setPlans(Array.isArray(res.data) ? res.data : []);
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+        }
+    }, [router.query.slug]);
 
     const handleClose = () => {
         setOpen(false);
@@ -100,29 +104,132 @@ export default function EnhancedTable() {
                     <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle" size="medium">
                         <EnhancedTableHead />
                         <TableBody>
-                            {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
+                            {plans.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
                                 return (
                                     <TableRow sx={{ whiteSpace: "nowrap" }} key={row.title}>
                                         <TableCell align="center">
-                                            <Typography size="p">{row.title}</Typography>
+                                            <Typography
+                                                size="p"
+                                                sx={{
+                                                    overflow: "hidden",
+                                                    textOverflow: "ellipsis",
+                                                    display: "-webkit-box",
+                                                    WebkitLineClamp: "2",
+                                                    WebkitBoxOrient: "vertical",
+                                                    whiteSpace: "nowrap",
+                                                    maxWidth: "8rem"
+                                                }}>
+                                                {row.MaKHDT}
+                                            </Typography>
                                         </TableCell>
                                         <TableCell align="center">
-                                            <Typography size="p">{row.category}</Typography>
+                                            <Typography
+                                                size="p"
+                                                sx={{
+                                                    overflow: "hidden",
+                                                    textOverflow: "ellipsis",
+                                                    display: "-webkit-box",
+                                                    WebkitLineClamp: "2",
+                                                    WebkitBoxOrient: "vertical",
+                                                    whiteSpace: "nowrap",
+                                                    maxWidth: "14rem"
+                                                }}>
+                                                {row.MoTa}
+                                            </Typography>
                                         </TableCell>
                                         <TableCell align="center">
-                                            <Typography size="p">{row.gender}</Typography>
+                                            <Typography
+                                                size="p"
+                                                sx={{
+                                                    overflow: "hidden",
+                                                    textOverflow: "ellipsis",
+                                                    display: "-webkit-box",
+                                                    WebkitLineClamp: "2",
+                                                    WebkitBoxOrient: "vertical",
+                                                    whiteSpace: "nowrap",
+                                                    maxWidth: "8rem"
+                                                }}>
+                                                {moment(row.NgayDieuTri).format("DD-MM-YYYY")}
+                                            </Typography>
                                         </TableCell>
                                         <TableCell align="center">
-                                            <Typography size="p">{row.writer}</Typography>
+                                            <Box sx={{ display: "flex", justifyContent: "center" }}>
+                                                <Typography
+                                                    size="p"
+                                                    sx={{
+                                                        overflow: "hidden",
+                                                        textOverflow: "ellipsis",
+                                                        display: "-webkit-box",
+                                                        WebkitLineClamp: "2",
+                                                        WebkitBoxOrient: "vertical",
+                                                        whiteSpace: "nowrap",
+                                                        maxWidth: "10rem"
+                                                    }}>
+                                                    {row.GhiChu}
+                                                </Typography>
+                                            </Box>
                                         </TableCell>
                                         <TableCell align="center">
-                                            <Typography size="p">{row.date}</Typography>
+                                            <Box sx={{ display: "flex", justifyContent: "center" }}>
+                                                <Typography
+                                                    size="p"
+                                                    sx={{
+                                                        overflow: "hidden",
+                                                        textOverflow: "ellipsis",
+                                                        display: "-webkit-box",
+                                                        WebkitLineClamp: "2",
+                                                        WebkitBoxOrient: "vertical",
+                                                        whiteSpace: "nowrap",
+                                                        maxWidth: "10rem"
+                                                    }}>
+                                                    {row.TrangThai}
+                                                </Typography>
+                                            </Box>
                                         </TableCell>
                                         <TableCell align="center">
-                                            <Typography size="p">{row.password}</Typography>
+                                            <Typography
+                                                size="p"
+                                                sx={{
+                                                    overflow: "hidden",
+                                                    textOverflow: "ellipsis",
+                                                    display: "-webkit-box",
+                                                    WebkitLineClamp: "2",
+                                                    WebkitBoxOrient: "vertical",
+                                                    whiteSpace: "nowrap",
+                                                    maxWidth: "8rem"
+                                                }}>
+                                                {row.MaBN}
+                                            </Typography>
                                         </TableCell>
                                         <TableCell align="center">
-                                            <Typography size="p">{row.status}</Typography>
+                                            <Typography
+                                                size="p"
+                                                sx={{
+                                                    overflow: "hidden",
+                                                    textOverflow: "ellipsis",
+                                                    display: "-webkit-box",
+                                                    WebkitLineClamp: "2",
+                                                    WebkitBoxOrient: "vertical",
+                                                    whiteSpace: "nowrap",
+                                                    maxWidth: "8rem"
+                                                }}>
+                                                {row.KhamChinh}
+                                            </Typography>
+                                        </TableCell>
+                                        <TableCell align="center">
+                                            <Typography
+                                                size="p"
+                                                sx={{
+                                                    overflow: "hidden",
+                                                    textOverflow: "ellipsis",
+                                                    display: "-webkit-box",
+                                                    WebkitLineClamp: "2",
+                                                    WebkitBoxOrient: "vertical",
+                                                    whiteSpace: "nowrap",
+                                                    maxWidth: "8rem"
+                                                }}>
+                                                {row.TroKham}
+                                            </Typography>
                                         </TableCell>
                                         <TableCell align="center">
                                             <ActionCell onClick={handleOpen} />
@@ -141,7 +248,7 @@ export default function EnhancedTable() {
                     }}
                     rowsPerPageOptions={[5, 10, 25]}
                     component="div"
-                    count={rows.length}
+                    count={plans.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     onPageChange={handleChangePage}
@@ -210,18 +317,6 @@ const headCells = [
         label: "Ngày điều trị"
     },
     {
-        id: "writer",
-        numeric: true,
-        disablePadding: false,
-        label: "Bác sĩ thực hiện"
-    },
-    {
-        id: "date",
-        numeric: true,
-        disablePadding: false,
-        label: "Trợ khám"
-    },
-    {
         id: "password",
         numeric: true,
         disablePadding: false,
@@ -232,6 +327,24 @@ const headCells = [
         numeric: true,
         disablePadding: false,
         label: "Trạng thái"
+    },
+    {
+        id: "patient",
+        numeric: true,
+        disablePadding: false,
+        label: "Mã bệnh nhân"
+    },
+    {
+        id: "writer",
+        numeric: true,
+        disablePadding: false,
+        label: "Nha sĩ chính"
+    },
+    {
+        id: "date",
+        numeric: true,
+        disablePadding: false,
+        label: "Trợ khám"
     }
 ];
 
@@ -261,8 +374,9 @@ const fetchData = [
     { label: "Mã điều trị", value: "" },
     { label: "Mô tả", value: "" },
     { label: "Ngày điều trị", value: "" },
-    { label: "Bác sĩ thực hiện", value: "" },
-    { label: "Trợ khám", value: "" },
+    { label: "Ghi chú", value: "" },
     { label: "Trạng thái", value: "" },
-    { label: "Ghi chú", value: "" }
+    { label: "Mã bệnh nhân", value: "" },
+    { label: "Nha sĩ chính", value: "" },
+    { label: "Trợ khám", value: "" }
 ];

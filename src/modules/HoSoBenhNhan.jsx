@@ -6,6 +6,7 @@ import { CreateOutlined } from "@mui/icons-material";
 import { Button, TextField, Typography } from "../components";
 import ToggleDrawer from "./components/Drawer";
 import BenhNhanTable from "./components/BenhNhanTable";
+import axios from "axios";
 
 const HoSoBenhNhan = () => {
     const [open, setOpen] = useState(false);
@@ -14,6 +15,8 @@ const HoSoBenhNhan = () => {
 
     const handleClose = () => {
         setOpen(false);
+        fetchData.forEach((item) => (item.value = ""));
+        setData(fetchData);
     };
 
     const handleOpen = () => {
@@ -36,15 +39,14 @@ const HoSoBenhNhan = () => {
             EmailBN: data[5].value,
             DiaChiBN: data[6].value
         };
-        axios
-            .post(`http://localhost:5000/ThemTTBenhNhan`, { ...value })
-            .then((res) => {
-                console.log(res.data);
-            })
-            .catch((err) => {
-                console.log(err);
-            })
-            .finally(() => {});
+
+        try {
+            const res = await axios.post(`http://localhost:5000/ThemTTBenhNhan`, value);
+            console.log(res.data);
+            handleClose();
+        } catch (err) {
+            console.log(err);
+        }
     };
 
     return (

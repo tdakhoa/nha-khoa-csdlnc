@@ -9,13 +9,18 @@ import {
     TableHead,
     TablePagination,
     TableRow,
-    IconButton
+    IconButton,
+    Grid,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions
 } from "@mui/material";
 import { CreateOutlined, DeleteOutlined, LockOutlined } from "@mui/icons-material";
 import axios from "axios";
 import moment from "moment";
 
-import { Typography } from "../../components";
+import { Button, TextField, Typography } from "../../components";
 
 function EnhancedTableHead() {
     return (
@@ -47,6 +52,9 @@ export default function EnhancedTable() {
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
     const [employee, setEmployee] = React.useState([]);
+    const [open, setOpen] = React.useState(false);
+    const [data, setData] = React.useState([]);
+    const [render, setRender] = React.useState(false);
 
     React.useEffect(() => {
         axios
@@ -60,6 +68,57 @@ export default function EnhancedTable() {
             })
             .finally(() => {});
     }, []);
+
+    const handleOpen = (doctor) => {
+        setOpen(true);
+        let temp = fetchData.map((e, i) => {
+            return { ...e, value: Object.values(doctor)[i] };
+        });
+        setData(temp);
+    };
+
+    const deleteEmployee = async (id) => {
+        try {
+            await axios.post(`http://localhost:5000/UPDATE_THE_EMPLOYEE/${id}`);
+            const res = await axios.get(`http://localhost:5000/ALL_THE_EMPLOYEE`);
+            setEmployee(Array.isArray(res.data) ? res.data : []);
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
+    const updateEmployee = async (id) => {
+        let value = {
+            MaND: data[0].value,
+            TenND: data[1].value,
+            NgaySinhND: data[2].value,
+            GioiTinhND: data[3].value,
+            MatKhau: data[4].value,
+            LoaiNguoiDung: data[5].value,
+            PhongKham: data[6].value
+        };
+
+        try {
+            await axios.post(`http://localhost:5000/UPDATE_THE_EMPLOYEE/${id}`, value);
+            const allEmployeeRes = await axios.get(`http://localhost:5000/ALL_THE_EMPLOYEE`);
+            setEmployee(Array.isArray(allEmployeeRes.data) ? allEmployeeRes.data : []);
+        } catch (err) {
+            console.log(err);
+        } finally {
+            setOpen(false);
+        }
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
+    const handleChange = (e, i) => {
+        let temp = data;
+        temp[i].value = e.currentTarget.value;
+        setData(temp);
+        setRender(!render);
+    };
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -84,7 +143,7 @@ export default function EnhancedTable() {
                         <TableBody>
                             {employee.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
                                 return (
-                                    <TableRow sx={{ whiteSpace: "nowrap" }} key={row.MaND}>
+                                    <TableRow sx={{ whiteSpace: "nowrap" }} key={row.title}>
                                         <TableCell align="center">
                                             <Typography size="p">{row.MaND}</Typography>
                                         </TableCell>
@@ -122,7 +181,10 @@ export default function EnhancedTable() {
                                             <Typography size="p">{row.PhongKham}</Typography>
                                         </TableCell>
                                         <TableCell align="center">
-                                            <ActionCell />
+                                            <ActionCell
+                                                edit={() => handleOpen(row)}
+                                                delete={() => deleteEmployee(row.MaND)}
+                                            />
                                         </TableCell>
                                     </TableRow>
                                 );
@@ -145,21 +207,73 @@ export default function EnhancedTable() {
                     onRowsPerPageChange={handleChangeRowsPerPage}
                 />
             </Box>
+
+            <Dialog open={open} onClose={handleClose}>
+                <DialogTitle>
+                    <Box
+                        sx={{
+                            display: "flex",
+                            width: "100%",
+                            justifyContent: "space-between",
+                            alignItems: "center"
+                        }}>
+                        <Typography weight="bold" size="large">
+                            Cập nhật hồ sơ
+                        </Typography>
+                    </Box>
+                </DialogTitle>
+
+                <DialogContent>
+                    <InputContainer container spacing={3}>
+                        {data.map((item, i) => (
+                            <>
+                                {i == 4 || i == 5 ? (
+                                    <div></div>
+                                ) : i == 2 ? (
+                                    <Grid item xs={12} sm={6} key={i}>
+                                        <TextField
+                                            label={item.label}
+                                            value={moment(item.value).format("DD-MM-YYYY")}
+                                            onChange={(e) => handleChange(e, i)}
+                                        />
+                                    </Grid>
+                                ) : (
+                                    <Grid item xs={12} sm={6} key={i}>
+                                        <TextField
+                                            label={item.label}
+                                            value={item.value}
+                                            onChange={(e) => handleChange(e, i)}
+                                        />
+                                    </Grid>
+                                )}
+                            </>
+                        ))}
+                    </InputContainer>
+                </DialogContent>
+                <DialogActions>
+                    <Button bgcolor="gray" onClick={handleClose} sx={{ width: "7rem" }}>
+                        Thoát
+                    </Button>
+                    <Button bgcolor="secondary" onClick={() => updateEmployee(data[0].value)} sx={{ width: "7rem" }}>
+                        Cập nhật
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </EnhancedTableBox>
     );
 }
 
-const ActionCell = () => {
+const ActionCell = (props) => {
     return (
         <Box sx={StyledActionCell}>
             <IconButton>
                 <LockOutlined />
             </IconButton>
             <IconButton>
-                <CreateOutlined />
+                <CreateOutlined onClick={props.edit} />
             </IconButton>
             <IconButton>
-                <DeleteOutlined />
+                <DeleteOutlined onClick={props.delete} />
             </IconButton>
         </Box>
     );
@@ -210,3 +324,22 @@ const EnhancedTableBox = styled(Box)(({ theme }) => ({
     overflow: "hidden",
     transition: "all 0.3s ease-in-out"
 }));
+
+const InputContainer = styled(Grid)(({ theme }) => ({
+    width: "100%",
+    marginLeft: "0",
+    padding: "12px 16px",
+    [theme.breakpoints.down("sm")]: {
+        paddingLeft: 0
+    }
+}));
+
+const fetchData = [
+    { label: "Mã nhân viên", value: "" },
+    { label: "Họ tên", value: "" },
+    { label: "Ngày sinh", value: "" },
+    { label: "Giới tính", value: "" },
+    { label: "Mật khẩu", value: "" },
+    { label: "Loại người dùng", value: "" },
+    { label: "Mã phòng khám", value: "" }
+];

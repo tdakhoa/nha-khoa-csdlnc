@@ -114,6 +114,7 @@ export default function ToggleDrawer() {
                     value={url}>
                     {menuItems.map((item, i) => (
                         <BottomNavigationAction
+                            key={i}
                             onClick={() => router.push(item.link)}
                             sx={{
                                 minHeight: "4rem",
