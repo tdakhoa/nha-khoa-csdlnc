@@ -53,8 +53,6 @@ export default function EnhancedTable() {
     const [plans, setPlans] = React.useState([]);
     const router = useRouter();
 
-    console.log(router);
-
     React.useEffect(() => {
         if (router.query.slug) {
             axios
@@ -69,17 +67,56 @@ export default function EnhancedTable() {
         }
     }, [router.query.slug]);
 
+    const handleOpen = (plan) => {
+        setOpen(true);
+        let temp = fetchData.map((e, i) => {
+            return { ...e, value: Object.values(plan)[i] };
+        });
+        setData(temp);
+    };
+
+    const deletePlan = async (id) => {
+        try {
+            await axios.post(`http://localhost:5000/XoaChiTietKeHoachDieuTri/${id}`);
+            const res = await axios.get(`http://localhost:5000/XemKeHoachDieuTriBenhNhan/${router.query.slug}`);
+            setPlans(Array.isArray(res.data) ? res.data : []);
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
+    const updatePlan = async () => {
+        let value = {
+            MaKHDT: data[0].value,
+            MoTa: data[1].value,
+            NgayDieuTri: data[2].value,
+            GhiChu: data[3].value,
+            TrangThai: data[4].value,
+            MaBN: data[5].value,
+            KhamChinh: data[6].value,
+            TroKham: data[7].value
+        };
+
+        try {
+            await axios.post(`http://localhost:5000/CapNhatKeHoachDieuTriBenhNhan`, value);
+            const allPlanRes = await axios.get(`http://localhost:5000/XemKeHoachDieuTriBenhNhan/${router.query.slug}`);
+            setPlans(Array.isArray(allPlanRes.data) ? allPlanRes.data : []);
+        } catch (err) {
+            console.log(err);
+        } finally {
+            setOpen(false);
+        }
+        
+    };
+
     const handleClose = () => {
         setOpen(false);
     };
 
-    const handleOpen = () => {
-        setOpen(true);
-    };
-
     const handleChange = (e, i) => {
-        fetchData[i].value = e.currentTarget.value;
-        setData(fetchData);
+        let temp = data;
+        temp[i].value = e.currentTarget.value;
+        setData(temp);
         setRender(!render);
     };
 
@@ -123,19 +160,26 @@ export default function EnhancedTable() {
                                             </Typography>
                                         </TableCell>
                                         <TableCell align="center">
-                                            <Typography
-                                                size="p"
+                                            <Box
                                                 sx={{
-                                                    overflow: "hidden",
-                                                    textOverflow: "ellipsis",
-                                                    display: "-webkit-box",
-                                                    WebkitLineClamp: "2",
-                                                    WebkitBoxOrient: "vertical",
-                                                    whiteSpace: "nowrap",
-                                                    maxWidth: "14rem"
+                                                    display: "flex",
+                                                    justifyContent: "center",
+                                                    alignItems: "end"
                                                 }}>
-                                                {row.MoTa}
-                                            </Typography>
+                                                <Typography
+                                                    size="p"
+                                                    sx={{
+                                                        overflow: "hidden",
+                                                        textOverflow: "ellipsis",
+                                                        display: "-webkit-box",
+                                                        WebkitLineClamp: "2",
+                                                        WebkitBoxOrient: "vertical",
+                                                        whiteSpace: "nowrap",
+                                                        maxWidth: "14rem"
+                                                    }}>
+                                                    {row.MoTa}
+                                                </Typography>
+                                            </Box>
                                         </TableCell>
                                         <TableCell align="center">
                                             <Typography
@@ -232,7 +276,10 @@ export default function EnhancedTable() {
                                             </Typography>
                                         </TableCell>
                                         <TableCell align="center">
-                                            <ActionCell onClick={handleOpen} />
+                                            <ActionCell
+                                                edit={() => handleOpen(row)}
+                                                delete={() => deletePlan(row.MaKHDT)}
+                                            />
                                         </TableCell>
                                     </TableRow>
                                 );
@@ -258,16 +305,41 @@ export default function EnhancedTable() {
 
             <Dialog open={open} onClose={handleClose}>
                 <DialogTitle>
-                    <Typography weight="bold" size="large">
-                        Cập nhật kế hoạch điều trị
-                    </Typography>
+                    <Box
+                        sx={{
+                            display: "flex",
+                            width: "100%",
+                            justifyContent: "space-between",
+                            alignItems: "center"
+                        }}>
+                        <Typography weight="bold" size="large">
+                            Cập nhật hồ sơ
+                        </Typography>
+                    </Box>
                 </DialogTitle>
+
                 <DialogContent>
                     <InputContainer container spacing={3}>
                         {data.map((item, i) => (
-                            <Grid item xs={12} sm={i == 6 ? 12 : 6} key={i}>
-                                <TextField label={item.label} value={item.value} onChange={(e) => handleChange(e, i)} />
-                            </Grid>
+                            <>
+                                {i == 2 ? (
+                                    <Grid item xs={12} sm={6} key={i}>
+                                        <TextField
+                                            label={item.label}
+                                            value={moment(item.value).format("DD-MM-YYYY")}
+                                            onChange={(e) => handleChange(e, i)}
+                                        />
+                                    </Grid>
+                                ) : (
+                                    <Grid item xs={12} sm={6} key={i}>
+                                        <TextField
+                                            label={item.label}
+                                            value={item.value}
+                                            onChange={(e) => handleChange(e, i)}
+                                        />
+                                    </Grid>
+                                )}
+                            </>
                         ))}
                     </InputContainer>
                 </DialogContent>
@@ -275,7 +347,7 @@ export default function EnhancedTable() {
                     <Button bgcolor="gray" onClick={handleClose} sx={{ width: "7rem" }}>
                         Thoát
                     </Button>
-                    <Button bgcolor="secondary" onClick={handleClose} sx={{ width: "7rem" }}>
+                    <Button bgcolor="secondary" onClick={() => updatePlan()} sx={{ width: "7rem" }}>
                         Cập nhật
                     </Button>
                 </DialogActions>
@@ -284,14 +356,14 @@ export default function EnhancedTable() {
     );
 }
 
-const ActionCell = ({ onClick }) => {
+const ActionCell = (props) => {
     return (
         <Box sx={StyledActionCell}>
             <IconButton>
-                <CreateOutlined onClick={onClick} />
+                <CreateOutlined onClick={props.edit} />
             </IconButton>
             <IconButton>
-                <DeleteOutlined />
+                <DeleteOutlined onClick={props.delete} />
             </IconButton>
         </Box>
     );

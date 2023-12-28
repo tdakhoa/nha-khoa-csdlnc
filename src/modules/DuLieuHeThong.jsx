@@ -50,7 +50,7 @@ const DuLieuHeThong = () => {
         try {
             const addUrl =
                 value === 0 ? "http://localhost:5000/ADD_THE_DOCTOR" : "http://localhost:5000/ADD_THE_EMPLOYEE";
-            const addRes = await axios.post(addUrl, dataValue);
+            await axios.post(addUrl, dataValue);
             const fetchUrl =
                 value === 0 ? "http://localhost:5000/ALL_THE_DOCTORS" : "http://localhost:5000/ALL_THE_EMPLOYEES";
             const fetchRes = await axios.get(fetchUrl);

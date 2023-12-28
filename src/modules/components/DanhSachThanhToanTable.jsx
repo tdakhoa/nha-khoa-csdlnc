@@ -21,6 +21,7 @@ import { CreateOutlined, DeleteOutlined } from "@mui/icons-material";
 import { Button, TextField, Typography } from "../../components";
 import axios from "axios";
 import { useRouter } from "next/router";
+import moment from "moment";
 
 function EnhancedTableHead() {
     return (
@@ -33,11 +34,6 @@ function EnhancedTableHead() {
                         </Typography>
                     </TableCell>
                 ))}
-                <TableCell>
-                    <Typography weight="bold" color="white">
-                        Hành động
-                    </Typography>
-                </TableCell>
             </TableRow>
         </TableHead>
     );
@@ -105,28 +101,136 @@ export default function EnhancedTable() {
                                 return (
                                     <TableRow sx={{ whiteSpace: "nowrap" }} key={row.title}>
                                         <TableCell align="center">
-                                            <Typography size="p">{row.title}</Typography>
+                                            <Box
+                                                sx={{
+                                                    display: "flex",
+                                                    justifyContent: "center",
+                                                    alignItems: "end"
+                                                }}>
+                                                <Typography
+                                                    size="p"
+                                                    sx={{
+                                                        overflow: "hidden",
+                                                        textOverflow: "ellipsis",
+                                                        display: "-webkit-box",
+                                                        WebkitLineClamp: "2",
+                                                        WebkitBoxOrient: "vertical",
+                                                        whiteSpace: "nowrap",
+                                                        maxWidth: "8rem"
+                                                    }}>
+                                                    {row.MaThanhToan}
+                                                </Typography>
+                                            </Box>
                                         </TableCell>
                                         <TableCell align="center">
-                                            <Typography size="p">{row.category}</Typography>
+                                            <Box
+                                                sx={{
+                                                    display: "flex",
+                                                    justifyContent: "center",
+                                                    alignItems: "end"
+                                                }}>
+                                                <Typography
+                                                    size="p"
+                                                    sx={{
+                                                        overflow: "hidden",
+                                                        textOverflow: "ellipsis",
+                                                        display: "-webkit-box",
+                                                        WebkitLineClamp: "2",
+                                                        WebkitBoxOrient: "vertical",
+                                                        whiteSpace: "nowrap",
+                                                        maxWidth: "8rem"
+                                                    }}>
+                                                    {moment(row.NgayGiaoDich).format("DD-MM-YYYY")}
+                                                </Typography>
+                                            </Box>
                                         </TableCell>
                                         <TableCell align="center">
-                                            <Typography size="p">{row.gender}</Typography>
+                                            <Box
+                                                sx={{
+                                                    display: "flex",
+                                                    justifyContent: "center",
+                                                    alignItems: "end"
+                                                }}>
+                                                <Typography
+                                                    size="p"
+                                                    sx={{
+                                                        overflow: "hidden",
+                                                        textOverflow: "ellipsis",
+                                                        display: "-webkit-box",
+                                                        WebkitLineClamp: "2",
+                                                        WebkitBoxOrient: "vertical",
+                                                        whiteSpace: "nowrap",
+                                                        maxWidth: "8rem"
+                                                    }}>
+                                                    {row.TongTien}
+                                                </Typography>
+                                            </Box>
                                         </TableCell>
                                         <TableCell align="center">
-                                            <Typography size="p">{row.writer}</Typography>
+                                            <Box
+                                                sx={{
+                                                    display: "flex",
+                                                    justifyContent: "center",
+                                                    alignItems: "end"
+                                                }}>
+                                                <Typography
+                                                    size="p"
+                                                    sx={{
+                                                        overflow: "hidden",
+                                                        textOverflow: "ellipsis",
+                                                        display: "-webkit-box",
+                                                        WebkitLineClamp: "2",
+                                                        WebkitBoxOrient: "vertical",
+                                                        whiteSpace: "nowrap",
+                                                        maxWidth: "8rem"
+                                                    }}>
+                                                    {row.DaTra}
+                                                </Typography>
+                                            </Box>
                                         </TableCell>
                                         <TableCell align="center">
-                                            <Typography size="p">{row.date}</Typography>
+                                            <Box
+                                                sx={{
+                                                    display: "flex",
+                                                    justifyContent: "center",
+                                                    alignItems: "end"
+                                                }}>
+                                                <Typography
+                                                    size="p"
+                                                    sx={{
+                                                        overflow: "hidden",
+                                                        textOverflow: "ellipsis",
+                                                        display: "-webkit-box",
+                                                        WebkitLineClamp: "2",
+                                                        WebkitBoxOrient: "vertical",
+                                                        whiteSpace: "nowrap",
+                                                        maxWidth: "8rem"
+                                                    }}>
+                                                    {row.TienThoi}
+                                                </Typography>
+                                            </Box>
                                         </TableCell>
                                         <TableCell align="center">
-                                            <Typography size="p">{row.password}</Typography>
-                                        </TableCell>
-                                        <TableCell align="center">
-                                            <Typography size="p">{row.status}</Typography>
-                                        </TableCell>
-                                        <TableCell align="center">
-                                            <ActionCell onClick={handleOpen} />
+                                            <Box
+                                                sx={{
+                                                    display: "flex",
+                                                    justifyContent: "center",
+                                                    alignItems: "end"
+                                                }}>
+                                                <Typography
+                                                    size="p"
+                                                    sx={{
+                                                        overflow: "hidden",
+                                                        textOverflow: "ellipsis",
+                                                        display: "-webkit-box",
+                                                        WebkitLineClamp: "2",
+                                                        WebkitBoxOrient: "vertical",
+                                                        whiteSpace: "nowrap",
+                                                        maxWidth: "14rem"
+                                                    }}>
+                                                    {row.LoaiThanhToan}
+                                                </Typography>
+                                            </Box>
                                         </TableCell>
                                     </TableRow>
                                 );
@@ -198,13 +302,13 @@ const headCells = [
         id: "title",
         numeric: false,
         disablePadding: true,
-        label: "Ngày giao dịch"
+        label: "Mã thanh toán"
     },
     {
         id: "category",
         numeric: true,
         disablePadding: false,
-        label: "Người thanh toán"
+        label: "Ngày giao dịch"
     },
     {
         id: "gender",
@@ -229,12 +333,6 @@ const headCells = [
         numeric: true,
         disablePadding: false,
         label: "Loại thanh toán"
-    },
-    {
-        id: "status",
-        numeric: true,
-        disablePadding: false,
-        label: "Ghi chú"
     }
 ];
 
@@ -261,11 +359,10 @@ const InputContainer = styled(Grid)(({ theme }) => ({
 }));
 
 const fetchData = [
+    { label: "Mã thanh toán", value: "" },
     { label: "Ngày giao dịch", value: "" },
-    { label: "Người thanh toán", value: "" },
-    { label: "Tổng tiền cần thanh toán", value: "" },
+    { label: "Tổng tiền", value: "" },
     { label: "Tiền đã trả", value: "" },
     { label: "Tiền thối", value: "" },
-    { label: "Loại thanh toán", value: "" },
-    { label: "Ghi chú", value: "" }
+    { label: "Loại thanh toán", value: "" }
 ];

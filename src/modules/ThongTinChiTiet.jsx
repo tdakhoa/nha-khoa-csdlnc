@@ -8,12 +8,15 @@ import ToggleDrawer from "./components/Drawer";
 import KeHoachDieuTriTable from "./components/KeHoachDieuTriTable";
 import DonThuocTable from "./components/DonThuocTable";
 import DanhSachThanhToanTable from "./components/DanhSachThanhToanTable";
+import { useRouter } from "next/router";
+import axios from "axios";
 
 const ThongTinChiTiet = () => {
     const [open, setOpen] = useState(false);
     const [data, setData] = useState(fetchData);
     const [render, setRender] = useState(false);
     const [value, setValue] = useState(0);
+    const router = useRouter();
 
     const handleChangeTab = (event, newValue) => {
         setValue(newValue);
@@ -21,6 +24,9 @@ const ThongTinChiTiet = () => {
 
     const handleClose = () => {
         setOpen(false);
+        fetchData.forEach((item) => (item.value = ""));
+        fetchData1.forEach((item) => (item.value = ""));
+        setData(fetchData);
     };
 
     const handleOpen = () => {
@@ -28,9 +34,45 @@ const ThongTinChiTiet = () => {
     };
 
     const handleChange = (e, i) => {
-        fetchData[i].value = e.currentTarget.value;
-        setData(fetchData);
+        if (value == 0) fetchData[i].value = e.currentTarget.value;
+        else fetchData1[i].value = e.currentTarget.value;
+        setData(value == 0 ? fetchData : fetchData1);
         setRender(!render);
+    };
+
+    const onSubmit = async () => {
+        let dataValue =
+            value == 0
+                ? {
+                      MaKHDT: data[0].value,
+                      MoTa: data[1].value,
+                      NgayDieuTri: data[2].value,
+                      GhiChu: data[3].value,
+                      TrangThai: data[4].value,
+                      MaBN: data[5].value,
+                      KhamChinh: data[6].value,
+                      TroKham: data[7].value
+                  }
+                : {
+                      NgayLap: data[0].value,
+                      MaBN: data[1].value,
+                      NguoiLap: data[2].value
+                  };
+        console.log(router.query.slug);
+        try {
+            const addUrl =
+                value === 0 ? `http://localhost:5000/ThemKeHoachDieuTriBenhNhan` : `http://localhost:5000/ThemDonThuoc`;
+            const post = await axios.post(addUrl, dataValue);
+            const fetchUrl =
+                value === 0
+                    ? `http://localhost:5000/XemKeHoachDieuTriBenhNhan/${router.query.slug}`
+                    : `http://localhost:5000/XemDonThuoc/${router.query.slug}`;
+            const get = await axios.get(fetchUrl);
+
+            handleClose();
+        } catch (err) {
+            console.log(err);
+        }
     };
 
     return (
@@ -74,7 +116,7 @@ const ThongTinChiTiet = () => {
                 </Box>
 
                 <Dialog open={open} onClose={handleClose}>
-                    <DialogTitle>Thêm hồ sơ</DialogTitle>
+                    <DialogTitle>{value == 0 ? "Thêm kế hoạch điều trị" : "Thêm đơn thuốc"}</DialogTitle>
                     <DialogContent>
                         <InputContainer container spacing={3}>
                             {data.map((item, i) => (
@@ -92,7 +134,7 @@ const ThongTinChiTiet = () => {
                         <Button bgcolor="gray" onClick={handleClose} sx={{ width: "5rem" }}>
                             Thoát
                         </Button>
-                        <Button bgcolor="secondary" onClick={handleClose} sx={{ width: "5rem" }}>
+                        <Button bgcolor="secondary" onClick={onSubmit} sx={{ width: "5rem" }}>
                             Thêm
                         </Button>
                     </DialogActions>
@@ -120,6 +162,17 @@ const HeaderBox = styled(Box)(({ theme }) => ({
 }));
 
 const fetchData = [
+    { label: "Mã KHDT", value: "" },
+    { label: "Mô Tả", value: "" },
+    { label: "Ngày điều trị", value: "" },
+    { label: "Ghi chú", value: "" },
+    { label: "Trạng thái", value: "" },
+    { label: "Mã bệnh nhân", value: "" },
+    { label: "Bác sĩ chính", value: "" },
+    { label: "Trợ khám", value: "" }
+];
+
+const fetchData1 = [
     { label: "ID khách hàng", value: "" },
     { label: "Họ tên", value: "" },
     { label: "Giới tính", value: "" },
