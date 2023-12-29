@@ -106,7 +106,6 @@ export default function EnhancedTable() {
         } finally {
             setOpen(false);
         }
-        
     };
 
     const handleClose = () => {
@@ -143,7 +142,7 @@ export default function EnhancedTable() {
                         <TableBody>
                             {plans.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
                                 return (
-                                    <TableRow sx={{ whiteSpace: "nowrap" }} key={row.title}>
+                                    <TableRow sx={{ whiteSpace: "nowrap" }} key={row.MaKHDT}>
                                         <TableCell align="center">
                                             <Typography
                                                 size="p"
@@ -313,7 +312,7 @@ export default function EnhancedTable() {
                             alignItems: "center"
                         }}>
                         <Typography weight="bold" size="large">
-                            Cập nhật hồ sơ
+                            Cập nhật kế hoạch điều trị
                         </Typography>
                     </Box>
                 </DialogTitle>

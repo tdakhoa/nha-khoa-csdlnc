@@ -30,6 +30,7 @@ const ThongTinChiTiet = () => {
     };
 
     const handleOpen = () => {
+        setData(value == 0 ? fetchData : fetchData1);
         setOpen(true);
     };
 
@@ -54,9 +55,12 @@ const ThongTinChiTiet = () => {
                       TroKham: data[7].value
                   }
                 : {
-                      NgayLap: data[0].value,
-                      MaBN: data[1].value,
-                      NguoiLap: data[2].value
+                      MaDonThuoc: data[0].value,
+                      MaThuoc: data[1].value,
+                      NgayLap: data[2].value,
+                      LieuLuong: data[3].value,
+                      MaBN: data[4].value,
+                      NguoiLap: data[5].value
                   };
         console.log(router.query.slug);
         try {
@@ -66,7 +70,7 @@ const ThongTinChiTiet = () => {
             const fetchUrl =
                 value === 0
                     ? `http://localhost:5000/XemKeHoachDieuTriBenhNhan/${router.query.slug}`
-                    : `http://localhost:5000/XemDonThuoc/${router.query.slug}`;
+                    : `http://localhost:5000/DonThuoc/${router.query.slug}`;
             const get = await axios.get(fetchUrl);
 
             handleClose();
@@ -173,12 +177,12 @@ const fetchData = [
 ];
 
 const fetchData1 = [
-    { label: "ID khách hàng", value: "" },
-    { label: "Họ tên", value: "" },
-    { label: "Giới tính", value: "" },
-    { label: "Ngày sinh", value: "" },
-    { label: "Số điện thoại", value: "" },
-    { label: "Mật khẩu", value: "" }
+    { label: "Mã đơn thuốc", value: "" },
+    { label: "Mã thuốc", value: "" },
+    { label: "Ngày lập", value: "" },
+    { label: "Liều lượng", value: "" },
+    { label: "Mã bệnh nhân", value: "" },
+    { label: "Người lập", value: "" }
 ];
 
 const InputContainer = styled(Grid)(({ theme }) => ({

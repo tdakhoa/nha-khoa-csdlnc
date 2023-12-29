@@ -99,7 +99,7 @@ export default function EnhancedTable() {
                         <TableBody>
                             {payment.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
                                 return (
-                                    <TableRow sx={{ whiteSpace: "nowrap" }} key={row.title}>
+                                    <TableRow sx={{ whiteSpace: "nowrap" }} key={row.MaThanhToan}>
                                         <TableCell align="center">
                                             <Box
                                                 sx={{

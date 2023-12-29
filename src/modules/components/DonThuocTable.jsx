@@ -21,6 +21,7 @@ import { CreateOutlined, DeleteOutlined } from "@mui/icons-material";
 import { Button, TextField, Typography } from "../../components";
 import { useRouter } from "next/router";
 import axios from "axios";
+import moment from "moment";
 
 function EnhancedTableHead() {
     return (
@@ -47,14 +48,14 @@ export default function EnhancedTable() {
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
     const [open, setOpen] = React.useState(false);
-    const [data, setData] = React.useState(fetchData);
+    const [data, setData] = React.useState(donThuocData);
     const [render, setRender] = React.useState(false);
     const [medicines, setMedicines] = React.useState([]);
     const router = useRouter();
 
     React.useEffect(() => {
         axios
-            .get(`http://localhost:5000/XemDonThuoc`)
+            .get(`http://localhost:5000/DonThuoc/${router.query.slug}`)
             .then((res) => {
                 console.log(res);
                 setMedicines(Array.isArray(res.data) ? res.data : []);
@@ -65,17 +66,53 @@ export default function EnhancedTable() {
             .finally(() => {});
     }, []);
 
+    const handleOpen = (medicine) => {
+        setOpen(true);
+        let temp = donThuocData.map((e, i) => {
+            return { ...e, value: Object.values(medicine)[i] };
+        });
+        setData(temp);
+    };
+
+    const deleteMedicine = async (id) => {
+        try {
+            await axios.post(`http://localhost:5000/XoaDonThuoc/${id}`);
+            const res = await axios.get(`http://localhost:5000/DonThuoc/${router.query.slug}`);
+            setMedicines(Array.isArray(res.data) ? res.data : []);
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
+    const updateMedicine = async () => {
+        let value = {
+            MaDonThuoc: data[0].value,
+            MaThuoc: data[1].value,
+            NgayLap: data[2].value,
+            LieuLuong: data[3].value,
+            MaBN: data[4].value,
+            NguoiLap: data[5].value
+        };
+
+        try {
+            await axios.post(`http://localhost:5000/SuaDonThuoc`, value);
+            const allPlanRes = await axios.get(`http://localhost:5000/DonThuoc/${router.query.slug}`);
+            setMedicines(Array.isArray(allPlanRes.data) ? allPlanRes.data : []);
+        } catch (err) {
+            console.log(err);
+        } finally {
+            setOpen(false);
+        }
+    };
+
     const handleClose = () => {
         setOpen(false);
     };
 
-    const handleOpen = () => {
-        setOpen(true);
-    };
-
     const handleChange = (e, i) => {
-        fetchData[i].value = e.currentTarget.value;
-        setData(fetchData);
+        let temp = data;
+        temp[i].value = e.currentTarget.value;
+        setData(temp);
         setRender(!render);
     };
 
@@ -102,25 +139,121 @@ export default function EnhancedTable() {
                         <TableBody>
                             {medicines.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
                                 return (
-                                    <TableRow sx={{ whiteSpace: "nowrap" }} key={row.title}>
+                                    <TableRow sx={{ whiteSpace: "nowrap" }} key={row.MaDonThuoc}>
                                         <TableCell align="center">
-                                            <Typography size="p">{row.title}</Typography>
+                                            <Typography
+                                                size="p"
+                                                sx={{
+                                                    overflow: "hidden",
+                                                    textOverflow: "ellipsis",
+                                                    display: "-webkit-box",
+                                                    WebkitLineClamp: "2",
+                                                    WebkitBoxOrient: "vertical",
+                                                    whiteSpace: "nowrap",
+                                                    maxWidth: "8rem"
+                                                }}>
+                                                {row.MaDonThuoc}
+                                            </Typography>
                                         </TableCell>
                                         <TableCell align="center">
-                                            <Typography size="p">{row.category}</Typography>
+                                            <Box
+                                                sx={{
+                                                    display: "flex",
+                                                    justifyContent: "center",
+                                                    alignItems: "end"
+                                                }}>
+                                                <Typography
+                                                    size="p"
+                                                    sx={{
+                                                        overflow: "hidden",
+                                                        textOverflow: "ellipsis",
+                                                        display: "-webkit-box",
+                                                        WebkitLineClamp: "2",
+                                                        WebkitBoxOrient: "vertical",
+                                                        whiteSpace: "nowrap",
+                                                        maxWidth: "14rem"
+                                                    }}>
+                                                    {row.MaThuoc}
+                                                </Typography>
+                                            </Box>
                                         </TableCell>
                                         <TableCell align="center">
-                                            <Typography size="p">{row.gender}</Typography>
+                                            <Box
+                                                sx={{
+                                                    display: "flex",
+                                                    justifyContent: "center",
+                                                    alignItems: "end"
+                                                }}>
+                                                <Typography
+                                                    size="p"
+                                                    sx={{
+                                                        overflow: "hidden",
+                                                        textOverflow: "ellipsis",
+                                                        display: "-webkit-box",
+                                                        WebkitLineClamp: "2",
+                                                        WebkitBoxOrient: "vertical",
+                                                        whiteSpace: "nowrap",
+                                                        maxWidth: "8rem"
+                                                    }}>
+                                                    {moment(row.NgayLap).format("DD-MM-YYYY")}
+                                                </Typography>
+                                            </Box>
                                         </TableCell>
                                         <TableCell align="center">
-                                            <Typography size="p">{row.writer}</Typography>
+                                            <Box sx={{ display: "flex", justifyContent: "center" }}>
+                                                <Typography
+                                                    size="p"
+                                                    sx={{
+                                                        overflow: "hidden",
+                                                        textOverflow: "ellipsis",
+                                                        display: "-webkit-box",
+                                                        WebkitLineClamp: "2",
+                                                        WebkitBoxOrient: "vertical",
+                                                        whiteSpace: "nowrap",
+                                                        maxWidth: "10rem"
+                                                    }}>
+                                                    {row.LieuLuong}
+                                                </Typography>
+                                            </Box>
                                         </TableCell>
                                         <TableCell align="center">
-                                            <Typography size="p">{row.date}</Typography>
+                                            <Box sx={{ display: "flex", justifyContent: "center" }}>
+                                                <Typography
+                                                    size="p"
+                                                    sx={{
+                                                        overflow: "hidden",
+                                                        textOverflow: "ellipsis",
+                                                        display: "-webkit-box",
+                                                        WebkitLineClamp: "2",
+                                                        WebkitBoxOrient: "vertical",
+                                                        whiteSpace: "nowrap",
+                                                        maxWidth: "10rem"
+                                                    }}>
+                                                    {row.MaBN}
+                                                </Typography>
+                                            </Box>
+                                        </TableCell>
+                                        <TableCell align="center">
+                                            <Typography
+                                                size="p"
+                                                sx={{
+                                                    overflow: "hidden",
+                                                    textOverflow: "ellipsis",
+                                                    display: "-webkit-box",
+                                                    WebkitLineClamp: "2",
+                                                    WebkitBoxOrient: "vertical",
+                                                    whiteSpace: "nowrap",
+                                                    maxWidth: "8rem"
+                                                }}>
+                                                {row.NguoiLap}
+                                            </Typography>
                                         </TableCell>
 
                                         <TableCell align="center">
-                                            <ActionCell onClick={handleOpen} />
+                                            <ActionCell
+                                                edit={() => handleOpen(row)}
+                                                delete={() => deleteMedicine(row.MaDonThuoc)}
+                                            />
                                         </TableCell>
                                     </TableRow>
                                 );
@@ -146,18 +279,41 @@ export default function EnhancedTable() {
 
             <Dialog open={open} onClose={handleClose}>
                 <DialogTitle>
-                    <Box sx={{ display: "flex", width: "100%", justifyContent: "space-between", alignItems: "center" }}>
+                    <Box
+                        sx={{
+                            display: "flex",
+                            width: "100%",
+                            justifyContent: "space-between",
+                            alignItems: "center"
+                        }}>
                         <Typography weight="bold" size="large">
-                            Cập nhật đơn thuốc
+                            Cập nhật kế hoạch điều trị
                         </Typography>
                     </Box>
                 </DialogTitle>
+
                 <DialogContent>
                     <InputContainer container spacing={3}>
                         {data.map((item, i) => (
-                            <Grid item xs={12} sm={i == 2 ? 12 : 6} key={i}>
-                                <TextField label={item.label} value={item.value} onChange={(e) => handleChange(e, i)} />
-                            </Grid>
+                            <>
+                                {i == 2 ? (
+                                    <Grid item xs={12} sm={6} key={i}>
+                                        <TextField
+                                            label={item.label}
+                                            value={moment(item.value).format("DD-MM-YYYY")}
+                                            onChange={(e) => handleChange(e, i)}
+                                        />
+                                    </Grid>
+                                ) : (
+                                    <Grid item xs={12} sm={6} key={i}>
+                                        <TextField
+                                            label={item.label}
+                                            value={item.value}
+                                            onChange={(e) => handleChange(e, i)}
+                                        />
+                                    </Grid>
+                                )}
+                            </>
                         ))}
                     </InputContainer>
                 </DialogContent>
@@ -165,7 +321,7 @@ export default function EnhancedTable() {
                     <Button bgcolor="gray" onClick={handleClose} sx={{ width: "7rem" }}>
                         Thoát
                     </Button>
-                    <Button bgcolor="secondary" onClick={handleClose} sx={{ width: "7rem" }}>
+                    <Button bgcolor="secondary" onClick={() => updateMedicine()} sx={{ width: "7rem" }}>
                         Cập nhật
                     </Button>
                 </DialogActions>
@@ -174,14 +330,14 @@ export default function EnhancedTable() {
     );
 }
 
-const ActionCell = ({ onClick }) => {
+const ActionCell = (props) => {
     return (
         <Box sx={StyledActionCell}>
             <IconButton>
-                <CreateOutlined onClick={onClick} />
+                <CreateOutlined onClick={props.edit} />
             </IconButton>
             <IconButton>
-                <DeleteOutlined />
+                <DeleteOutlined onClick={props.delete} />
             </IconButton>
         </Box>
     );
@@ -192,31 +348,37 @@ const headCells = [
         id: "title",
         numeric: false,
         disablePadding: true,
-        label: "ID thuốc"
+        label: "Mã đơn thuốc"
     },
     {
         id: "category",
         numeric: true,
         disablePadding: false,
-        label: "Tên thuốc"
+        label: "Mã thuốc"
     },
     {
         id: "gender",
         numeric: true,
         disablePadding: false,
-        label: "Đơn vị tính"
+        label: "Ngày lập"
     },
     {
-        id: "writer",
+        id: "amount",
         numeric: true,
         disablePadding: false,
-        label: "Số lượng"
+        label: "Liều lượng"
     },
     {
-        id: "date",
+        id: "patient",
         numeric: true,
         disablePadding: false,
-        label: "Giá tiền"
+        label: "Mã bệnh nhân"
+    },
+    {
+        id: "doctor",
+        numeric: true,
+        disablePadding: false,
+        label: "Người lập"
     }
 ];
 
@@ -242,10 +404,11 @@ const InputContainer = styled(Grid)(({ theme }) => ({
     }
 }));
 
-const fetchData = [
-    { label: "ID thuốc", value: "" },
-    { label: "Đơn vị tính", value: "" },
-    { label: "Tên thuốc", value: "" },
-    { label: "Số lượng", value: "" },
-    { label: "Giá tiền", value: "" }
+const donThuocData = [
+    { label: "Mã đơn thuốc", value: "" },
+    { label: "Mã thuốc", value: "" },
+    { label: "Ngày lập", value: "" },
+    { label: "Liều lượng", value: "" },
+    { label: "Mã bệnh nhân", value: "" },
+    { label: "Người lập", value: "" }
 ];
