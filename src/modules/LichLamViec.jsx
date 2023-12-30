@@ -5,7 +5,7 @@ import { CreateOutlined } from "@mui/icons-material";
 
 import { Button, TextField, Typography } from "../components";
 import ToggleDrawer from "./components/Drawer";
-import ThuocTable from "./components/ThuocTable";
+import LichLamViecTable from "./components/LichLamViecTable";
 import axios from "axios";
 
 const QuanLyThuoc = () => {
@@ -58,7 +58,7 @@ const QuanLyThuoc = () => {
                             weight="extraBold"
                             color="secondary"
                             format={{ lg: "left", md: "center" }}>
-                            Quản lý thuốc
+                            Quản lý chống chỉ định
                         </Typography>
                     </Box>
 
@@ -67,11 +67,11 @@ const QuanLyThuoc = () => {
                         borderradius="10px"
                         endIcon={<CreateOutlined sx={{ fontSize: "1.4rem", pl: "0.3rem" }} />}
                         onClick={handleOpen}>
-                        <Typography size="p">Thêm loại thuốc</Typography>
+                        <Typography size="p">Thêm chống chỉ định</Typography>
                     </Button>
                 </HeaderBox>
 
-                <ThuocTable />
+                <LichLamViecTable />
             </Box>
 
             <Dialog open={open} onClose={handleClose}>

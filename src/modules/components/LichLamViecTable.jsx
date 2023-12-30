@@ -11,11 +11,11 @@ import {
     TableRow,
     IconButton
 } from "@mui/material";
-import { CloseOutlined, Done } from "@mui/icons-material";
+import { DeleteOutlined, EditOutlined, VisibilityOutlined } from "@mui/icons-material";
 import axios from "axios";
-import moment from "moment";
 
 import { Typography } from "../../components";
+import moment from "moment";
 
 function EnhancedTableHead() {
     return (
@@ -43,14 +43,14 @@ function EnhancedTableHead() {
     );
 }
 
-export default function EnhancedTable() {
+export default function EnhancedTable(props) {
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
-    let [schedure, setSchedure] = React.useState([]);
+    const [schedure, setSchedure] = React.useState([]);
 
     React.useEffect(() => {
         axios
-            .get(`http://localhost:5000/GET_SCHEDURE`)
+            .get(`http://localhost:5000/DSChongChiDinh`)
             .then((res) => {
                 console.log(res);
                 setSchedure(Array.isArray(res.data) ? res.data : []);
@@ -59,7 +59,7 @@ export default function EnhancedTable() {
                 console.log(err);
             })
             .finally(() => {});
-    }, []);
+    }, [props.MaBN]);
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -84,14 +84,9 @@ export default function EnhancedTable() {
                         <TableBody>
                             {schedure.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
                                 return (
-                                    <TableRow sx={{ whiteSpace: "nowrap" }} hover tabIndex={-1} key={row?.MaLichHen}>
-                                        <TableCell align="center">
-                                            <Box
-                                                sx={{
-                                                    display: "flex",
-                                                    justifyContent: "center",
-                                                    alignItems: "end"
-                                                }}>
+                                    <TableRow sx={{ whiteSpace: "nowrap" }} key={row.MaLichHen}>
+                                        <TableCell align="left">
+                                            <Box sx={{ display: "flex", justifyContent: "center" }}>
                                                 <Typography
                                                     sx={{
                                                         overflow: "hidden",
@@ -103,57 +98,14 @@ export default function EnhancedTable() {
                                                         maxWidth: "14rem"
                                                     }}
                                                     size="p">
-                                                    {row.TenBN}
+                                                    {row.MaBN}
                                                 </Typography>
                                             </Box>
                                         </TableCell>
                                         <TableCell align="center">
-                                            <Box
-                                                sx={{
-                                                    display: "flex",
-                                                    justifyContent: "center",
-                                                    alignItems: "end"
-                                                }}>
-                                                <Typography
-                                                    size="p"
-                                                    sx={{
-                                                        overflow: "hidden",
-                                                        textOverflow: "ellipsis",
-                                                        display: "-webkit-box",
-                                                        WebkitLineClamp: "2",
-                                                        WebkitBoxOrient: "vertical",
-                                                        whiteSpace: "nowrap",
-                                                        maxWidth: "6rem"
-                                                    }}>
-                                                    {moment(row.Ngay).format("DD-MM-YYYY")}
-                                                </Typography>
-                                            </Box>
+                                            <Typography size="p">{row.MaThuoc}</Typography>
                                         </TableCell>
-                                        <TableCell align="center">
-                                            <Typography size="p">{row.TinhTrang}</Typography>
-                                        </TableCell>
-                                        <TableCell align="center">
-                                            <Box
-                                                sx={{
-                                                    display: "flex",
-                                                    justifyContent: "center",
-                                                    alignItems: "end"
-                                                }}>
-                                                <Typography
-                                                    sx={{
-                                                        overflow: "hidden",
-                                                        textOverflow: "ellipsis",
-                                                        display: "-webkit-box",
-                                                        WebkitLineClamp: "2",
-                                                        WebkitBoxOrient: "vertical",
-                                                        whiteSpace: "nowrap",
-                                                        maxWidth: "10rem"
-                                                    }}
-                                                    size="p">
-                                                    {moment(row.Gio).format("DD-MM-YYYY")}
-                                                </Typography>
-                                            </Box>
-                                        </TableCell>
+
                                         <TableCell align="center">
                                             <ActionCell />
                                         </TableCell>
@@ -186,10 +138,13 @@ const ActionCell = () => {
     return (
         <Box sx={StyledActionCell}>
             <IconButton>
-                <Done />
+                <VisibilityOutlined />
             </IconButton>
             <IconButton>
-                <CloseOutlined />
+                <EditOutlined />
+            </IconButton>
+            <IconButton>
+                <DeleteOutlined />
             </IconButton>
         </Box>
     );
@@ -197,29 +152,16 @@ const ActionCell = () => {
 
 const headCells = [
     {
-        id: "title",
+        id: "Mã BN",
         numeric: false,
         disablePadding: true,
-        label: "Tên bệnh nhân"
+        label: "Mã Bệnh Nhân"
     },
     {
-        id: "category",
+        id: "Mã Thuốc",
         numeric: true,
         disablePadding: false,
-        label: "Ngày hẹn"
-    },
-    {
-        id: "writer",
-        numeric: true,
-        disablePadding: false,
-        label: "Tình trạng"
-    },
-
-    {
-        id: "date",
-        numeric: true,
-        disablePadding: false,
-        label: "Thời gian yêu cầu"
+        label: "Mã thuốc"
     }
 ];
 

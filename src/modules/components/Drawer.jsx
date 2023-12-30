@@ -22,7 +22,8 @@ import {
     CalendarMonthRounded,
     FolderRounded,
     VaccinesRounded,
-    SettingsRounded
+    SettingsRounded,
+    DangerousOutlined
 } from "@mui/icons-material";
 
 import { Typography } from "../../components";
@@ -149,11 +150,6 @@ export default function ToggleDrawer() {
 }
 
 const menuItems = [
-    {
-        text: "Trang chủ",
-        icon: <HomeRounded />,
-        link: "/home"
-    },
     {
         text: "Quản lý cuộc hẹn",
         icon: <CalendarMonthRounded />,

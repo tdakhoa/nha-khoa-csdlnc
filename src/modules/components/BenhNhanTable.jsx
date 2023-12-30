@@ -14,10 +14,10 @@ import {
     DialogTitle,
     DialogContent,
     Grid,
+    TextField as MuiTextField,
     DialogActions
 } from "@mui/material";
-import { CreateOutlined, DeleteOutlined, LockOutlined, VisibilityOutlined } from "@mui/icons-material";
-import Link from "next/link";
+import { CreateOutlined, DeleteOutlined, FormatListBulleted, VisibilityOutlined } from "@mui/icons-material";
 import axios from "axios";
 
 import { Button, TextField, Typography } from "../../components";
@@ -57,6 +57,11 @@ export default function EnhancedTable() {
     const [data, setData] = React.useState([]);
     const [render, setRender] = React.useState(false);
     const [patients, setPatients] = React.useState([]);
+    const [openTQ, setOpenTQ] = React.useState(false);
+    const [TQState, setTQState] = React.useState(false);
+    const [TongQuan, setTongQuan] = React.useState([]);
+    const [ChiDinh, setChiDinh] = React.useState([]);
+    const [MaThuocCu, setMaThuocCu] = React.useState("");
     const router = useRouter();
 
     React.useEffect(() => {
@@ -78,6 +83,54 @@ export default function EnhancedTable() {
             return { ...e, value: Object.values(patient)[i] };
         });
         setData(temp);
+    };
+
+    const handleOpenTQ = async (TongQuan) => {
+        try {
+            const res = await axios.get(`http://localhost:5000/XemChongChiDinh/${TongQuan.MaBN}`);
+            setChiDinh(Array.isArray(res.data) ? res.data : []);
+        } catch (err) {
+            console.error("Error updating patient:", err);
+        } finally {
+            setTongQuan(TongQuan);
+            setOpenTQ(true);
+            setMaThuocCu(ChiDinh[0]?.MaThuoc || "");
+        }
+    };
+
+    const handleCloseTQ = () => {
+        setTongQuan("");
+        setOpenTQ(false);
+        setTQState(false);
+    };
+
+    const handleChangeTQ = (e) => {
+        setTQState(true);
+        setTongQuan({ ...TongQuan, TongQuan: e.currentTarget.value });
+    };
+
+    const handleChangeCD = (e) => {
+        setTQState(true);
+        setChiDinh([{ MaThuocCu: MaThuocCu, MaThuocMoi: e.currentTarget.value, MaThuoc: e.currentTarget.value }]);
+    };
+
+    const handleUpdate = async () => {
+        let value = {
+            TongQuan: TongQuan.TongQuan
+        };
+
+        try {
+            await axios.post(`http://localhost:5000/SuaTinhTrangSucKhoeCuaBenhNhan/${TongQuan.MaBN}`, value);
+            await axios.post(`http://localhost:5000/SuaChongChiDinh/${TongQuan.MaBN}`, value);
+            const res = await axios.get(`http://localhost:5000/XemDsBenhNhan`);
+            setPatients(Array.isArray(res.data) ? res.data : []);
+        } catch (err) {
+            console.error("Error updating patient:", err);
+        } finally {
+            setOpen(false);
+        }
+
+        handleCloseTQ();
     };
 
     const deletePatient = async (id) => {
@@ -222,19 +275,26 @@ export default function EnhancedTable() {
                                             </Typography>
                                         </TableCell>
                                         <TableCell align="center">
-                                            <Typography
-                                                size="p"
+                                            <Box
                                                 sx={{
-                                                    overflow: "hidden",
-                                                    textOverflow: "ellipsis",
-                                                    display: "-webkit-box",
-                                                    WebkitLineClamp: "2",
-                                                    WebkitBoxOrient: "vertical",
-                                                    whiteSpace: "nowrap",
-                                                    maxWidth: "7rem"
+                                                    display: "flex",
+                                                    justifyContent: "center",
+                                                    alignItems: "end"
                                                 }}>
-                                                {row.SDTBN}
-                                            </Typography>
+                                                <Typography
+                                                    size="p"
+                                                    sx={{
+                                                        overflow: "hidden",
+                                                        textOverflow: "ellipsis",
+                                                        display: "-webkit-box",
+                                                        WebkitLineClamp: "2",
+                                                        WebkitBoxOrient: "vertical",
+                                                        whiteSpace: "nowrap",
+                                                        maxWidth: "7rem"
+                                                    }}>
+                                                    {row.SDTBN}
+                                                </Typography>
+                                            </Box>
                                         </TableCell>
                                         <TableCell align="center">
                                             <Box
@@ -282,6 +342,7 @@ export default function EnhancedTable() {
                                         </TableCell>
                                         <TableCell align="center">
                                             <ActionCell
+                                                all={() => handleOpenTQ(row)}
                                                 edit={() => handleOpen(row)}
                                                 detail={() =>
                                                     router.push(`/ho-so-benh-nhan/thong-tin-chi-tiet/${row.MaBN}`)
@@ -362,6 +423,47 @@ export default function EnhancedTable() {
                     </Button>
                 </DialogActions>
             </Dialog>
+
+            <Dialog open={openTQ} onClose={handleCloseTQ}>
+                <DialogTitle>
+                    <Typography weight="bold" size="large">
+                        Sức khoẻ tổng quan của bệnh nhân: {TongQuan.MaBN}
+                    </Typography>
+                </DialogTitle>
+                <Box sx={{ padding: "1rem", width: "100%" }}>
+                    <MuiTextField
+                        id={ChiDinh[0]?.MaBN || "0"}
+                        fullWidth
+                        multiline
+                        rows={5}
+                        value={TongQuan.TongQuan}
+                        onChange={handleChangeTQ}
+                    />
+                </Box>
+
+                <Typography weight="bold" size="large" sx={{ marginLeft: "1.5rem" }}>
+                    Chống chỉ định của bệnh nhân: {TongQuan.MaBN}
+                </Typography>
+
+                <Box sx={{ padding: "1rem", width: "100%" }}>
+                    <MuiTextField
+                        id={ChiDinh[0]?.MaThuoc || "1"}
+                        fullWidth
+                        multiline
+                        rows={5}
+                        value={ChiDinh.map((item) => item.MaThuoc).join(", ") || ""}
+                        onChange={handleChangeCD}
+                    />
+                </Box>
+                <DialogActions>
+                    <Button bgcolor="gray" onClick={handleCloseTQ} sx={{ width: "7rem" }}>
+                        Thoát
+                    </Button>
+                    <Button bgcolor="secondary" disabled={!TQState} onClick={handleUpdate} sx={{ width: "7rem" }}>
+                        Cập nhật
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </EnhancedTableBox>
     );
 }
@@ -370,13 +472,13 @@ const ActionCell = (props) => {
     return (
         <Box sx={StyledActionCell}>
             <IconButton>
-                <LockOutlined />
-            </IconButton>
-            <IconButton>
                 <CreateOutlined onClick={props.edit} />
             </IconButton>
             <IconButton>
-                <VisibilityOutlined onClick={props.detail} />
+                <VisibilityOutlined onClick={props.all} />
+            </IconButton>
+            <IconButton>
+                <FormatListBulleted onClick={props.detail} />
             </IconButton>
             <IconButton>
                 <DeleteOutlined onClick={props.delete} />
