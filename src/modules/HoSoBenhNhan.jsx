@@ -2,16 +2,18 @@ import React from "react";
 import { useState } from "react";
 import { Box, Dialog, DialogActions, DialogContent, DialogTitle, Grid, styled } from "@mui/material";
 import { CreateOutlined } from "@mui/icons-material";
+import axios from "axios";
+import { useRouter } from "next/navigation";
 
 import { Button, TextField, Typography } from "../components";
 import ToggleDrawer from "./components/Drawer";
 import BenhNhanTable from "./components/BenhNhanTable";
-import axios from "axios";
 
 const HoSoBenhNhan = () => {
     const [open, setOpen] = useState(false);
     const [data, setData] = useState(fetchData);
     const [render, setRender] = useState(false);
+    const router = useRouter();
 
     const handleClose = () => {
         setOpen(false);
@@ -46,6 +48,8 @@ const HoSoBenhNhan = () => {
             handleClose();
         } catch (err) {
             console.log(err);
+        } finally {
+            router.refresh();
         }
     };
 

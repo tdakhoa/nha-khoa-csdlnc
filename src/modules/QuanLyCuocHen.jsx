@@ -60,41 +60,59 @@ const QuanLyCuocHen = () => {
                             format={{ lg: "left", md: "center" }}>
                             Quản lý cuộc hẹn
                         </Typography>
-                        <Box
-                            style={{
-                                display: "flex",
-                                alignItems: "end",
-                                gap: "1rem",
-                                width: "45vw"
-                            }}>
-                            <Typography
-                                size={{ lg: "p", md: "p" }}
-                                style={{ alignSelf: "center" }}
-                                weight="extraBold"
-                                color="secondary"
-                                format={{ lg: "left", md: "center" }}>
-                                Từ
-                            </Typography>
-                            <DatePicker
-                                inputFormat="DD-MM-YYYY"
-                                value={startDate}
-                                onChange={(date) => setStartDate(date)}
-                            />
-                            <Typography
-                                style={{ alignSelf: "center" }}
-                                size={{ lg: "p", md: "p" }}
-                                weight="extraBold"
-                                color="secondary"
-                                format={{ lg: "left", md: "center" }}>
-                                Đến
-                            </Typography>
-                            <DatePicker
-                                inputFormat="DD-MM-YYYY"
-                                value={endDate}
-                                onChange={(date) => setEndDate(date)}
-                            />
-                            <TextField label={"Tên Nha Sĩ"} value={name} onChange={(e) => setName(e.target.value)} />
-                        </Box>
+                        {value == 0 ? (
+                            <Box
+                                style={{
+                                    display: "flex",
+                                    alignItems: "end",
+                                    gap: "1rem",
+                                    width: "45vw"
+                                }}>
+                                <Typography
+                                    size={{ lg: "p", md: "p" }}
+                                    style={{ alignSelf: "center" }}
+                                    weight="extraBold"
+                                    color="secondary"
+                                    format={{ lg: "left", md: "center" }}>
+                                    Từ
+                                </Typography>
+                                <DatePicker
+                                    inputFormat="DD-MM-YYYY"
+                                    value={startDate}
+                                    onChange={(date) => {
+                                        setStartDate(date);
+                                        setName("");
+                                    }}
+                                />
+                                <Typography
+                                    style={{ alignSelf: "center" }}
+                                    size={{ lg: "p", md: "p" }}
+                                    weight="extraBold"
+                                    color="secondary"
+                                    format={{ lg: "left", md: "center" }}>
+                                    Đến
+                                </Typography>
+                                <DatePicker
+                                    inputFormat="DD-MM-YYYY"
+                                    value={endDate}
+                                    onChange={(date) => {
+                                        setEndDate(date);
+                                        setName("");
+                                    }}
+                                />
+                                <TextField
+                                    label={"Mã Nha Sĩ"}
+                                    value={name}
+                                    onChange={(e) => {
+                                        setName(e.target.value);
+                                        setStartDate(null);
+                                        setEndDate(null);
+                                    }}
+                                />
+                            </Box>
+                        ) : (
+                            <></>
+                        )}
                     </Box>
                     <Box sx={{ display: "flex" }}>
                         <Button

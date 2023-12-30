@@ -23,7 +23,8 @@ import {
     FolderRounded,
     VaccinesRounded,
     SettingsRounded,
-    DangerousOutlined
+    DangerousOutlined,
+    EventNoteOutlined
 } from "@mui/icons-material";
 
 import { Typography } from "../../components";
@@ -164,6 +165,11 @@ const menuItems = [
         text: "Quản lý thuốc",
         icon: <VaccinesRounded />,
         link: "/quan-ly-thuoc"
+    },
+    {
+        text: "Lịch làm việc",
+        icon: <EventNoteOutlined />,
+        link: "/lich-lam-viec"
     },
     {
         text: "Dữ liệu hệ thống",

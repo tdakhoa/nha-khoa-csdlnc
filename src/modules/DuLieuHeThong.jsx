@@ -3,18 +3,19 @@ import { useState } from "react";
 import Link from "next/link";
 import { Box, Dialog, DialogActions, DialogContent, DialogTitle, Grid, Tab, Tabs, styled } from "@mui/material";
 import { CreateOutlined } from "@mui/icons-material";
+import axios from "axios";
+import { useRouter } from "next/navigation";
 
 import { Button, TextField, Typography } from "../components";
 import ToggleDrawer from "./components/Drawer";
 import NhaSiTable from "./components/NhaSiTable";
 import NhanVienTable from "./components/NhanVienTable";
-import axios from "axios";
 
 const DuLieuHeThong = () => {
     const [value, setValue] = useState(0);
     const [open, setOpen] = useState(false);
     const [render, setRender] = useState(false);
-
+    const router = useRouter();
     const [data, setData] = useState(fetchData);
 
     const handleChange = (event, newValue) => {
@@ -60,6 +61,8 @@ const DuLieuHeThong = () => {
             handleClose();
         } catch (err) {
             console.log(err);
+        } finally {
+            router.refresh();
         }
     };
 

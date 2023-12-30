@@ -79,7 +79,7 @@ export default function EnhancedTable() {
 
     const deleteEmployee = async (id) => {
         try {
-            await axios.post(`http://localhost:5000/UPDATE_THE_EMPLOYEE/${id}`);
+            await axios.post(`http://localhost:5000/XoaNhanVien/${id}`);
             const res = await axios.get(`http://localhost:5000/ALL_THE_EMPLOYEE`);
             setEmployee(Array.isArray(res.data) ? res.data : []);
         } catch (err) {

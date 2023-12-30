@@ -50,7 +50,7 @@ export default function EnhancedTable(props) {
 
     React.useEffect(() => {
         axios
-            .get(`http://localhost:5000/DSChongChiDinh`)
+            .get(`http://localhost:5000/XemLichLamViec`)
             .then((res) => {
                 console.log(res);
                 setSchedure(Array.isArray(res.data) ? res.data : []);
@@ -59,7 +59,7 @@ export default function EnhancedTable(props) {
                 console.log(err);
             })
             .finally(() => {});
-    }, [props.MaBN]);
+    }, []);
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -69,6 +69,8 @@ export default function EnhancedTable(props) {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
     };
+
+    console.log(schedure);
 
     return (
         <EnhancedTableBox>
@@ -84,10 +86,38 @@ export default function EnhancedTable(props) {
                         <TableBody>
                             {schedure.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
                                 return (
-                                    <TableRow sx={{ whiteSpace: "nowrap" }} key={row.MaLichHen}>
-                                        <TableCell align="left">
-                                            <Box sx={{ display: "flex", justifyContent: "center" }}>
+                                    <TableRow sx={{ whiteSpace: "nowrap" }} key={row.MaKHDT}>
+                                        <TableCell align="center">
+                                            <Box
+                                                sx={{
+                                                    display: "flex",
+                                                    justifyContent: "center",
+                                                    alignItems: "end"
+                                                }}>
                                                 <Typography
+                                                    size="p"
+                                                    sx={{
+                                                        overflow: "hidden",
+                                                        textOverflow: "ellipsis",
+                                                        display: "-webkit-box",
+                                                        WebkitLineClamp: "2",
+                                                        WebkitBoxOrient: "vertical",
+                                                        whiteSpace: "nowrap",
+                                                        maxWidth: "8rem"
+                                                    }}>
+                                                    {row.MaLichLamViec}
+                                                </Typography>
+                                            </Box>
+                                        </TableCell>
+                                        <TableCell align="center">
+                                            <Box
+                                                sx={{
+                                                    display: "flex",
+                                                    justifyContent: "center",
+                                                    alignItems: "end"
+                                                }}>
+                                                <Typography
+                                                    size="p"
                                                     sx={{
                                                         overflow: "hidden",
                                                         textOverflow: "ellipsis",
@@ -96,18 +126,68 @@ export default function EnhancedTable(props) {
                                                         WebkitBoxOrient: "vertical",
                                                         whiteSpace: "nowrap",
                                                         maxWidth: "14rem"
-                                                    }}
-                                                    size="p">
-                                                    {row.MaBN}
+                                                    }}>
+                                                    {row.NhaSi}
                                                 </Typography>
                                             </Box>
                                         </TableCell>
                                         <TableCell align="center">
-                                            <Typography size="p">{row.MaThuoc}</Typography>
+                                            <Box sx={{ display: "flex", justifyContent: "center" }}>
+                                                <Typography
+                                                    size="p"
+                                                    sx={{
+                                                        overflow: "hidden",
+                                                        textOverflow: "ellipsis",
+                                                        display: "-webkit-box",
+                                                        WebkitLineClamp: "2",
+                                                        WebkitBoxOrient: "vertical",
+                                                        whiteSpace: "nowrap",
+                                                        maxWidth: "8rem"
+                                                    }}>
+                                                    {row.NgayLamViec}
+                                                </Typography>
+                                            </Box>
+                                        </TableCell>
+                                        <TableCell align="center">
+                                            <Box sx={{ display: "flex", justifyContent: "center" }}>
+                                                <Typography
+                                                    size="p"
+                                                    sx={{
+                                                        overflow: "hidden",
+                                                        textOverflow: "ellipsis",
+                                                        display: "-webkit-box",
+                                                        WebkitLineClamp: "2",
+                                                        WebkitBoxOrient: "vertical",
+                                                        whiteSpace: "nowrap",
+                                                        maxWidth: "10rem"
+                                                    }}>
+                                                    {moment(row.GioKetThuc).format("hh:mm")}
+                                                </Typography>
+                                            </Box>
+                                        </TableCell>
+                                        <TableCell align="center">
+                                            <Box sx={{ display: "flex", justifyContent: "center" }}>
+                                                <Typography
+                                                    size="p"
+                                                    sx={{
+                                                        overflow: "hidden",
+                                                        textOverflow: "ellipsis",
+                                                        display: "-webkit-box",
+                                                        WebkitLineClamp: "2",
+                                                        WebkitBoxOrient: "vertical",
+                                                        whiteSpace: "nowrap",
+                                                        maxWidth: "10rem"
+                                                    }}>
+                                                    {moment(row.GioBatDau).format("hh:mm")}
+                                                </Typography>
+                                            </Box>
                                         </TableCell>
 
                                         <TableCell align="center">
-                                            <ActionCell />
+                                            <ActionCell
+                                                edit={() => handleOpen(row)}
+                                                delete={() => deletePlan(row.MaKHDT)}
+                                            />
                                         </TableCell>
                                     </TableRow>
                                 );
@@ -138,9 +218,6 @@ const ActionCell = () => {
     return (
         <Box sx={StyledActionCell}>
             <IconButton>
-                <VisibilityOutlined />
-            </IconButton>
-            <IconButton>
                 <EditOutlined />
             </IconButton>
             <IconButton>
@@ -152,16 +229,34 @@ const ActionCell = () => {
 
 const headCells = [
     {
-        id: "Mã BN",
+        id: "Mã lịch làm việc",
         numeric: false,
         disablePadding: true,
-        label: "Mã Bệnh Nhân"
+        label: "Mã lịch làm việc"
     },
     {
-        id: "Mã Thuốc",
+        id: "Mã nha sĩ",
         numeric: true,
         disablePadding: false,
-        label: "Mã thuốc"
+        label: "Mã nha sĩ"
+    },
+    {
+        id: "Ngày làm việc",
+        numeric: true,
+        disablePadding: false,
+        label: "Ngày làm việc"
+    },
+    {
+        id: "Giờ bắt đầu",
+        numeric: true,
+        disablePadding: false,
+        label: "Giờ bắt đầu"
+    },
+    {
+        id: "Giờ kết thúc",
+        numeric: true,
+        disablePadding: false,
+        label: "Giờ kết thúc"
     }
 ];
 

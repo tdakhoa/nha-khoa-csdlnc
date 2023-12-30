@@ -104,9 +104,29 @@ export default function EnhancedTable() {
     };
 
     const handleChange = (e, i) => {
-        fetchData[i].value = e.currentTarget.value;
-        setData(fetchData);
+        let temp = data;
+        temp[i].value = e.currentTarget.value;
+        setData(temp);
         setRender(!render);
+    };
+
+    const updateDrug = async () => {
+        let value = {
+            mathuoc: data[0].value,
+            tenthuoc: data[1].value,
+            gia: data[2].value,
+            donvi: data[3].value
+        };
+
+        try {
+            await axios.post(`http://localhost:5000/SuaThuoc`, value);
+            const res = await axios.get(`http://localhost:5000/XemThuoc`);
+            setDrug(Array.isArray(res.data) ? res.data : []);
+        } catch (err) {
+            console.error("Error updating patient:", err);
+        } finally {
+            setOpen(false);
+        }
     };
 
     const handleChangePage = (event, newPage) => {
@@ -207,7 +227,7 @@ export default function EnhancedTable() {
                     <Button bgcolor="gray" onClick={handleClose} sx={{ width: "7rem" }}>
                         Thoát
                     </Button>
-                    <Button bgcolor="secondary" onClick={handleClose} sx={{ width: "7rem" }}>
+                    <Button bgcolor="secondary" onClick={() => updateDrug()} sx={{ width: "7rem" }}>
                         Cập nhật
                     </Button>
                 </DialogActions>

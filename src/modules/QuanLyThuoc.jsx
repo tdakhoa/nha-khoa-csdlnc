@@ -1,17 +1,18 @@
 import { useState } from "react";
-import Link from "next/link";
 import { Box, Dialog, DialogActions, DialogContent, DialogTitle, Grid, styled } from "@mui/material";
 import { CreateOutlined } from "@mui/icons-material";
+import axios from "axios";
+import { useRouter } from "next/navigation";
 
 import { Button, TextField, Typography } from "../components";
 import ToggleDrawer from "./components/Drawer";
 import ThuocTable from "./components/ThuocTable";
-import axios from "axios";
 
 const QuanLyThuoc = () => {
     const [open, setOpen] = useState(false);
     const [data, setData] = useState(fetchData);
     const [render, setRender] = useState(false);
+    const router = useRouter();
 
     const handleClose = () => {
         setOpen(false);
@@ -44,7 +45,10 @@ const QuanLyThuoc = () => {
             .catch((err) => {
                 console.log(err);
             })
-            .finally(() => {});
+            .finally(() => {
+                setOpen(false);
+                router.refresh();
+            });
     };
 
     return (

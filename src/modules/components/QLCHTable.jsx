@@ -45,23 +45,45 @@ function EnhancedTableHead() {
 
 export default function EnhancedTable(props) {
     const [page, setPage] = React.useState(0);
+    const [render, setRender] = React.useState(false);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
     const [schedure, setSchedure] = React.useState([]);
 
     React.useEffect(() => {
-        axios
-            .get(
-                `http://localhost:5000/LichHenDenNgay?start=${props.startDate}&end=${props.endDate}&name=${props.name}`
-            )
-            .then((res) => {
-                console.log(res);
-                setSchedure(Array.isArray(res.data) ? res.data : []);
-            })
-            .catch((err) => {
-                console.log(err);
-            })
-            .finally(() => {});
-    }, [props.endDate, props.startDate, props.name]);
+        if (props.name == "") {
+            axios
+                .get(
+                    `http://localhost:5000/LichHenDenNgay?start=${props.startDate}&end=${props.endDate}&name=${props.name}`
+                )
+                .then((res) => {
+                    console.log(res);
+                    setSchedure(Array.isArray(res.data) ? res.data : []);
+                })
+                .catch((err) => {
+                    console.log(err);
+                })
+                .finally(() => {
+                    setRender(!render);
+                });
+        }
+    }, [props.endDate, props.startDate]);
+
+    React.useEffect(() => {
+        if (props.name != "") {
+            axios
+                .get(`http://localhost:5000/LocCuocHenTheoNhaSi?name=${props.name}`)
+                .then((res) => {
+                    console.log(res);
+                    setSchedure(Array.isArray(res.data) ? res.data : []);
+                })
+                .catch((err) => {
+                    console.log(err);
+                })
+                .finally(() => {
+                    setRender(!render);
+                });
+        }
+    }, [props.name]);
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);

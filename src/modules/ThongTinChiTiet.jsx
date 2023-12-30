@@ -10,6 +10,7 @@ import DonThuocTable from "./components/DonThuocTable";
 import DanhSachThanhToanTable from "./components/DanhSachThanhToanTable";
 import { useRouter } from "next/router";
 import axios from "axios";
+import { navi as useRouter } from "next/navigation";
 
 const ThongTinChiTiet = () => {
     const [open, setOpen] = useState(false);
@@ -17,6 +18,7 @@ const ThongTinChiTiet = () => {
     const [render, setRender] = useState(false);
     const [value, setValue] = useState(0);
     const router = useRouter();
+    const naviRouter = navi();
 
     const handleChangeTab = (event, newValue) => {
         setValue(newValue);
@@ -76,6 +78,8 @@ const ThongTinChiTiet = () => {
             handleClose();
         } catch (err) {
             console.log(err);
+        } finally {
+            naviRouter.refresh();
         }
     };
 

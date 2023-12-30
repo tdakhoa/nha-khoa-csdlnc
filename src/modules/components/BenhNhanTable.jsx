@@ -119,15 +119,23 @@ export default function EnhancedTable() {
             TongQuan: TongQuan.TongQuan
         };
 
+        let CDValue = {
+            MaThuoc: MaThuocCu,
+            MaThuocMoi: ChiDinh[0].MaThuoc
+        };
+
         try {
-            await axios.post(`http://localhost:5000/SuaTinhTrangSucKhoeCuaBenhNhan/${TongQuan.MaBN}`, value);
-            await axios.post(`http://localhost:5000/SuaChongChiDinh/${TongQuan.MaBN}`, value);
+            //await axios.post(`http://localhost:5000/SuaTinhTrangSucKhoeCuaBenhNhan/${TongQuan.MaBN}`, value);
+            await axios.post(`http://localhost:5000/SuaChongChiDinh/${TongQuan.MaBN}`, CDValue);
             const res = await axios.get(`http://localhost:5000/XemDsBenhNhan`);
+            const CD = await axios.get(`http://localhost:5000/XemChongChiDinh/${TongQuan.MaBN}`);
             setPatients(Array.isArray(res.data) ? res.data : []);
+            setChiDinh(Array.isArray(CD.data) ? CD.data : []);
         } catch (err) {
             console.error("Error updating patient:", err);
         } finally {
             setOpen(false);
+            setMaThuocCu(ChiDinh[0]?.MaThuoc || "");
         }
 
         handleCloseTQ();
@@ -271,7 +279,7 @@ export default function EnhancedTable() {
                                                     whiteSpace: "nowrap",
                                                     maxWidth: "6rem"
                                                 }}>
-                                                {row.GioiTinhBN}
+                                                {row.GioiTinhBN == 0 ? "Nam" : "Nữ"}
                                             </Typography>
                                         </TableCell>
                                         <TableCell align="center">
@@ -442,7 +450,7 @@ export default function EnhancedTable() {
                 </Box>
 
                 <Typography weight="bold" size="large" sx={{ marginLeft: "1.5rem" }}>
-                    Chống chỉ định của bệnh nhân: {TongQuan.MaBN}
+                    Mã thuốc chống chỉ định của bệnh nhân:
                 </Typography>
 
                 <Box sx={{ padding: "1rem", width: "100%" }}>

@@ -58,7 +58,7 @@ const QuanLyThuoc = () => {
                             weight="extraBold"
                             color="secondary"
                             format={{ lg: "left", md: "center" }}>
-                            Quản lý chống chỉ định
+                            Lịch làm việc
                         </Typography>
                     </Box>
 
@@ -67,7 +67,7 @@ const QuanLyThuoc = () => {
                         borderradius="10px"
                         endIcon={<CreateOutlined sx={{ fontSize: "1.4rem", pl: "0.3rem" }} />}
                         onClick={handleOpen}>
-                        <Typography size="p">Thêm chống chỉ định</Typography>
+                        <Typography size="p">Thêm lịch làm việc</Typography>
                     </Button>
                 </HeaderBox>
 
@@ -75,7 +75,7 @@ const QuanLyThuoc = () => {
             </Box>
 
             <Dialog open={open} onClose={handleClose}>
-                <DialogTitle>Thêm thuốc</DialogTitle>
+                <DialogTitle>Thêm lịch làm việc</DialogTitle>
                 <DialogContent>
                     <InputContainer container spacing={3}>
                         {data.map((item, i) => (
@@ -116,10 +116,11 @@ const HeaderBox = styled(Box)(({ theme }) => ({
 }));
 
 const fetchData = [
-    { label: "ID thuốc", value: "" },
-    { label: "Tên thuốc", value: "" },
-    { label: "Đơn giá", value: "" },
-    { label: "Đơn vị tính", value: "" }
+    { label: "Mã lịch làm việc", value: "" },
+    { label: "Mã nha sĩ", value: "" },
+    { label: "Ngày làm việc", value: "" },
+    { label: "Giờ bắt đầu", value: "" },
+    { label: "Giờ kết thúc", value: "" }
 ];
 
 const InputContainer = styled(Grid)(({ theme }) => ({

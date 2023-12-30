@@ -79,7 +79,7 @@ export default function EnhancedTable() {
 
     const deleteDoctor = async (id) => {
         try {
-            await axios.post(`http://localhost:5000/UPDATE_THE_DOCTOR/${id}`);
+            await axios.post(`http://localhost:5000/XoaBacSi/${id}`);
             const res = await axios.get(`http://localhost:5000/ALL_THE_DOCTOR`);
             setDoctor(Array.isArray(res.data) ? res.data : []);
         } catch (err) {
@@ -272,9 +272,6 @@ const ActionCell = (props) => {
             </IconButton>
             <IconButton>
                 <CreateOutlined onClick={props.edit} />
-            </IconButton>
-            <IconButton>
-                <EventNoteOutlined />
             </IconButton>
             <IconButton>
                 <DeleteOutlined onClick={props.delete} />
