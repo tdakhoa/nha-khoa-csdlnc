@@ -10,7 +10,7 @@ import DonThuocTable from "./components/DonThuocTable";
 import DanhSachThanhToanTable from "./components/DanhSachThanhToanTable";
 import { useRouter } from "next/router";
 import axios from "axios";
-import { navi as useRouter } from "next/navigation";
+import { useRouter as navi } from "next/navigation";
 
 const ThongTinChiTiet = () => {
     const [open, setOpen] = useState(false);

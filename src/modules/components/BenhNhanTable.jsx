@@ -125,7 +125,7 @@ export default function EnhancedTable() {
         };
 
         try {
-            //await axios.post(`http://localhost:5000/SuaTinhTrangSucKhoeCuaBenhNhan/${TongQuan.MaBN}`, value);
+            await axios.post(`http://localhost:5000/SuaTinhTrangSucKhoeCuaBenhNhan/${TongQuan.MaBN}`, value);
             await axios.post(`http://localhost:5000/SuaChongChiDinh/${TongQuan.MaBN}`, CDValue);
             const res = await axios.get(`http://localhost:5000/XemDsBenhNhan`);
             const CD = await axios.get(`http://localhost:5000/XemChongChiDinh/${TongQuan.MaBN}`);
